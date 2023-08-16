@@ -1,15 +1,16 @@
+import 'package:books_app/book_detail.dart';
 import 'package:flutter/material.dart';
 
-class MyBooks extends StatefulWidget {
-  const MyBooks({super.key});
+class MyBookList extends StatefulWidget {
+  const MyBookList({super.key});
 
   @override
   State<StatefulWidget> createState() {
-    return MyBooksState();
+    return BookListState();
   }
 }
 
-class MyBooksState extends State<MyBooks> {
+class BookListState extends State<MyBookList> {
   bool isGrid = false;
 
   @override
@@ -173,49 +174,64 @@ class ItemBook extends StatelessWidget {
         height: 150,
       );
     } else {
-      return Container(
-        height: 100,
-        child: Card(
-          color: Colors.white,
-          child: Row(
-            children: [
-              Image(
-                image: AssetImage('assets/images/books/$img'),
-                width: 100,
-                height: 100,
-              ),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const SizedBox(
-                      height: 4,
-                    ),
-                    Text(
-                      title,
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                      style: const TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                          fontFamily: 'Prata'),
-                    ),
-                    const SizedBox(
-                      height: 8,
-                    ),
-                    Text(
-                      author,
-                      overflow: TextOverflow.ellipsis,
-                      textAlign: TextAlign.left,
-                      style: const TextStyle(
-                          fontSize: 14,
-                          fontWeight: FontWeight.normal,
-                          fontFamily: 'Prata'),
-                    ),
-                  ],
+      return InkWell(
+
+        onTap: (){
+          Navigator.push(context, MaterialPageRoute(
+            builder: (context) => BookDetail(bookId: title,)
+          ));
+        },
+
+        child: Container(
+          height: 100,
+          child: Card(
+            color: Colors.white,
+            margin: EdgeInsets.fromLTRB(8,8,8,0),
+
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(8),
+            ),
+
+            child: Row(
+              children: [
+                Image(
+                  image: AssetImage('assets/images/books/$img'),
+                  width: 100,
+                  height: 100,
                 ),
-              )
-            ],
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const SizedBox(
+                        height: 4,
+                      ),
+                      Text(
+                        title,
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                        style: const TextStyle(
+                            fontSize: 14,
+                            fontWeight: FontWeight.bold,
+                            fontFamily: 'Nanum'),
+                      ),
+                      const SizedBox(
+                        height: 4,
+                      ),
+                      Text(
+                        author,
+                        overflow: TextOverflow.ellipsis,
+                        textAlign: TextAlign.left,
+                        style: const TextStyle(
+                            fontSize: 11,
+                            fontWeight: FontWeight.normal,
+                            fontFamily: 'Nanum'),
+                      ),
+                    ],
+                  ),
+                )
+              ],
+            ),
           ),
         ),
       );

@@ -11,12 +11,32 @@ dependencies:
     sdk: flutter
 
   cupertino_icons: ^1.0.2
+  http: ^1.1.0
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
 
   flutter_lints: ^2.0.0
+  flutter_launcher_icons: ^0.13.1
+
+flutter_launcher_icons:
+  android: "launcher_icon"
+  ios: true
+  image_path: "assets/icons/book-pages.png"
+  min_sdk_android: 21 # android min sdk min:16, default 21
+  web:
+    generate: true
+    image_path: "assets/icons/book-pages.png"
+    background_color: "#FB505A"
+    theme_color: "#FB505A"
+  windows:
+    generate: true
+    image_path: "assets/icons/book-pages.png"
+    icon_size: 48 # min:48, max:256, default: 48
+  macos:
+    generate: true
+    image_path: "assets/icons/book-pages.png"
 
 flutter:
   uses-material-design: true
@@ -29,5 +49,13 @@ flutter:
     - family: Prata
       fonts:
         - asset: assets/fonts/Prata-Regular.ttf
+
+    - family: Nanum
+      fonts:
+        - asset: assets/fonts/NanumMyeongjo-Regular.ttf
+
+    - family: Jost
+      fonts:
+        - asset: assets/fonts/Jost-Regular.ttf
 
 

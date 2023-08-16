@@ -1,4 +1,7 @@
-import 'package:books_app/MyBooks.dart';
+import 'package:books_app/book_detail.dart';
+import 'package:books_app/book_list_dynamic.dart';
+import 'package:books_app/book_list_static.dart';
+import 'package:books_app/api_test.dart';
 import 'package:flutter/material.dart';
 
 void main() {
@@ -13,9 +16,9 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      home: const MyBooks(),
+      home: const BookList(),
 
-      title: 'Flutter Something',
+      title: 'Flutter BooksApp',
 
       theme: ThemeData(
         colorScheme: ColorScheme.fromSwatch(
