@@ -21,6 +21,7 @@ class MyApp extends StatelessWidget {
       title: 'Flutter BooksApp',
 
       theme: ThemeData(
+        fontFamily: 'Jost',
         colorScheme: ColorScheme.fromSwatch(
             primarySwatch: Colors.brown, backgroundColor: Colors.white),
         useMaterial3: true,
