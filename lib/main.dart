@@ -1,7 +1,4 @@
-import 'package:books_app/book_detail.dart';
-import 'package:books_app/book_list_dynamic.dart';
-import 'package:books_app/book_list_static.dart';
-import 'package:books_app/api_test.dart';
+import 'package:books_app/book_list.dart';
 import 'package:flutter/material.dart';
 
 void main() {
