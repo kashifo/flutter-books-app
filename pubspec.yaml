@@ -46,7 +46,7 @@ flutter:
   uses-material-design: true
 
   assets:
-    - assets/images/books/
+    - assets/images/
 
 
   fonts:

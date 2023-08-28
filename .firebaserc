@@ -1,7 +1,7 @@
 {
   "projects": {
     "default": "koder-kashif",
-    "flutter-boooks": "koder-kashif"
+    "flutter-books": "koder-kashif"
   },
   "targets": {},
   "etags": {}

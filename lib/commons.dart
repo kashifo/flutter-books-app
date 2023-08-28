@@ -1,4 +1,9 @@
 
+
+String getSearchUrl(String query){
+  return 'https://www.googleapis.com/books/v1/volumes?q=$query&startIndex=0&maxResults=20';
+}
+
 String handleNull(String? str){
   if(str==null)
     return '';
