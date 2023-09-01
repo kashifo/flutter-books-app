@@ -57,8 +57,12 @@ flutter:
     - family: Jost
       fonts:
         - asset: assets/fonts/Jost-Light.ttf
+          weight: 100
         - asset: assets/fonts/Jost-Regular.ttf
+          weight: 500
         - asset: assets/fonts/Jost-SemiBold.ttf
+          weight: 600
         - asset: assets/fonts/Jost-Bold.ttf
+          weight: 700
 
 

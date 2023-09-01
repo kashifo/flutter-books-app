@@ -10,27 +10,27 @@ import 'package:http/http.dart' as http;
 
 import 'ui/item_book_list.dart';
 
-String query = '';
+String query = 'steve joba';
 
-class BookList extends StatefulWidget {
-  const BookList({super.key});
+class Discover extends StatefulWidget {
+  const Discover({super.key});
 
   @override
   State<StatefulWidget> createState() {
-    return BookListState();
+    return DiscoverState();
   }
 }
 
-class BookListState extends State<BookList> {
+class DiscoverState extends State<Discover> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: EasySearchBar(
-        title: const Text('Search Books'),
-        onSearch: (value) => setState(() => query = value),
+      appBar: AppBar(
+        title: const Text('Discover', style: TextStyle(fontFamily: 'Jost', fontWeight: FontWeight.w600),),
         backgroundColor: Colors.white,
         foregroundColor: Colors.black,
       ),
+
       body: FutureBuilder<GBookList>(
         future: fetchBooks(http.Client()),
         builder: (context, snapshot) {
@@ -62,7 +62,7 @@ Future<GBookList> fetchBooks(http.Client client) async {
   if (!query.isEmpty) {
     final response = await client.get(Uri.parse( getSearchUrl(query) ));
 
-    print('fetchBooks response=${response.body}');
+    //print('fetchBooks response=${response.body}');
 
     // Use the compute function to run parsePhotos in a separate isolate.
     return compute(parseBooks, response.body);
@@ -76,10 +76,10 @@ GBookList parseBooks(String responseBody) {
   print('---parseBooks()---');
 
   final parsed_json = jsonDecode(responseBody);
-  print('parsed_json=$parsed_json');
+  //print('parsed_json=$parsed_json');
 
   final parsed_gbookList = GBookList.fromJson(parsed_json);
-  print('parsed_gbookList=${parsed_gbookList.toString()}');
+  //print('parsed_gbookList=${parsed_gbookList.toString()}');
 
   return parsed_gbookList;
 }

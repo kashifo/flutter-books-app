@@ -22,7 +22,7 @@ class BookDetail extends StatelessWidget {
         elevation: 2.0,
       ),
       body: FutureBuilder<GBook>(
-        future: fetchPhotos(bookId, http.Client()),
+        future: fetchBookDetail(bookId, http.Client()),
         builder: (context, snapshot) {
           if (snapshot.hasError) {
             return Center(
@@ -41,27 +41,27 @@ class BookDetail extends StatelessWidget {
   }
 }
 
-Future<GBook> fetchPhotos(String bookId, http.Client client) async {
-  print('---fetchPhotos()---');
+Future<GBook> fetchBookDetail(String bookId, http.Client client) async {
+  print('---fetchBookDetail()---$bookId');
 
   final response = await client
       .get(Uri.parse('https://www.googleapis.com/books/v1/volumes/$bookId'));
 
-  print('fetchPhotos response=${response.body}');
+  //print('fetchBookDetail response=${response.body}');
 
-  // Use the compute function to run parsePhotos in a separate isolate.
-  return compute(parsePhotos, response.body);
+  // Use the compute function to run parseBookDetail in a separate isolate.
+  return compute(parseBookDetail, response.body);
 }
 
 // A function that converts a response body into a List<GBook>.
-GBook parsePhotos(String responseBody) {
-  print('---parsePhotos()---');
+GBook parseBookDetail(String responseBody) {
+  //print('---parseBookDetail()---');
 
   final parsedJson = jsonDecode(responseBody);
-  print('parsed_json=$parsedJson');
+  //print('parsed_json=$parsedJson');
 
   final parsedGbook = GBook.fromJson(parsedJson);
-  print('parsed_gbook=$parsedGbook');
+  //print('parsed_gbook=$parsedGbook');
 
   return parsedGbook;
 }
@@ -89,17 +89,7 @@ class BookDetailUI extends StatelessWidget {
                       height: 150,
                     ),
 
-                    /*Image(
-                      //image: NetworkImage('https://books.google.com/books/content?id=wjB-wwEACAAJ&printsec=frontcover&img=1&zoom=1&imgtk=AFLRE72kghnIhXnM9okGcBmBypLoiEUicp-kXJ6YjBe_LnbaFeSrrgTx9AvpwXW5ZdcgoUgUqgb_T8KpXQQCHupkL7s6eRcFdSYi1dnswp6IhWwXKidFDN4jzOKfSO-xhpZvus1ZtuMh&source=gbs_api'),
-                      image: NetworkImage(
-                          gBook.volumeInfo!.imageLinks!.getSmallThumbnail() ),
-                      width: 100,
-                      height: 150,
-                      fit: BoxFit.fitHeight,
-                    ),*/
-
                     onTap: () {
-
                       showGeneralDialog(
                           context: context,
                           transitionDuration: Duration(milliseconds: 400),
@@ -108,7 +98,6 @@ class BookDetailUI extends StatelessWidget {
                               child: Center(
                                 child: Image(
                                   image: NetworkImage(
-                                      //'https://books.google.com/books/content?id=wjB-wwEACAAJ&printsec=frontcover&img=1&zoom=1&imgtk=AFLRE72kghnIhXnM9okGcBmBypLoiEUicp-kXJ6YjBe_LnbaFeSrrgTx9AvpwXW5ZdcgoUgUqgb_T8KpXQQCHupkL7s6eRcFdSYi1dnswp6IhWwXKidFDN4jzOKfSO-xhpZvus1ZtuMh&source=gbs_api'
                                       gBook.volumeInfo!.imageLinks!.thumbnail!
                                   ),
                                   fit: BoxFit.fitWidth,
@@ -117,9 +106,6 @@ class BookDetailUI extends StatelessWidget {
                               ),
                             );
                           });
-
-
-
                     },
                   ),
                   const SizedBox(
