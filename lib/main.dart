@@ -1,10 +1,21 @@
 import 'package:books_app/commons.dart';
 import 'package:books_app/discover.dart';
 import 'package:books_app/favorites.dart';
+import 'package:books_app/models/GBook.dart';
 import 'package:books_app/search.dart';
 import 'package:flutter/material.dart';
+import 'package:hive_flutter/hive_flutter.dart';
+import 'package:path_provider/path_provider.dart';
 
-void main() {
+void main() async {
+
+  await Hive.initFlutter();
+  Hive.registerAdapter(ImageLinksAdapter());
+  Hive.registerAdapter(VolumeInfoAdapter());
+  Hive.registerAdapter(GBookAdapter());
+
+  await Hive.openBox('favorites');
+
   runApp(
       const MyApp()
   );

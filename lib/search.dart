@@ -49,7 +49,7 @@ class SearchState extends State<Search> {
                   contentPadding: const EdgeInsets.all(15),
                   hintText: 'Type something to search',
                   hintStyle:
-                  const TextStyle(color: Color(0xffDDDADA), fontSize: 14),
+                  const TextStyle(color: Colors.black38, fontSize: 14),
                   suffixIcon: const Padding(
                     padding: EdgeInsets.all(12),
                     child: Icon(Icons.search, color: Colors.black54,),

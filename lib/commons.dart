@@ -1,9 +1,11 @@
-
-
 import 'package:flutter/material.dart';
 
 String getSearchUrl(String query){
-  return 'https://www.googleapis.com/books/v1/volumes?q=$query&startIndex=0&maxResults=20';
+  return 'https://www.googleapis.com/books/v1/volumes?q=$query&startIndex=0&maxResults=20&key=AIzaSyB54032jqT1-O2USaaEuZlwiSGpmjaWCPg';
+}
+
+String getBookDetailUrl(String bookId){
+  return 'https://www.googleapis.com/books/v1/volumes/$bookId?key=AIzaSyB54032jqT1-O2USaaEuZlwiSGpmjaWCPg';
 }
 
 String handleNull(String? str){

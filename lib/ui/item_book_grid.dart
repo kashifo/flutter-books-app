@@ -58,7 +58,7 @@ class ItemBooksGrid extends StatelessWidget {
             SizedBox(
               width: double.infinity,
               child: ExtendedImage.network(
-                gBook.volumeInfo!.imageLinks!.getSmallThumbnail(),
+                gBook.volumeInfo!.getThumbnail(),
                 height: 150,
                 fit: BoxFit.cover,
                 shape: BoxShape.rectangle,

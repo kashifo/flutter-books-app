@@ -28,6 +28,9 @@ class ItemBookList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+
+    print("thumb:${gBook.volumeInfo!.getThumbnail()}");
+
     return InkWell(
       onTap: () {
         Navigator.push(
@@ -48,7 +51,7 @@ class ItemBookList extends StatelessWidget {
           child: Row(
             children: [
               ExtendedImage.network(
-                gBook.volumeInfo!.imageLinks!.getSmallThumbnail(),
+                gBook.volumeInfo!.getThumbnail(),
                 width: 100,
                 height: 100,
               ),

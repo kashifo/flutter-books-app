@@ -1,8 +1,15 @@
-class GBook {
+import 'package:hive/hive.dart';
+
+part "GBook.g.dart";
+
+@HiveType(typeId: 0)
+class GBook extends HiveObject {
+  @HiveField(0)
   String? id;
+  @HiveField(1)
   VolumeInfo? volumeInfo;
 
-  GBook({this.id, this.volumeInfo});
+  GBook({required this.id, required this.volumeInfo});
 
   GBook.fromJson(Map<String, dynamic> json) {
     id = json['id'];
@@ -26,42 +33,61 @@ class GBook {
   }
 }
 
+@HiveType(typeId: 1)
 class VolumeInfo {
+
+  @HiveField(0)
   String? title;
+
+  @HiveField(1)
   List<String>? authors;
+
+  @HiveField(2)
   String? publisher;
+
+  @HiveField(3)
+  ImageLinks? imageLinks;
+
+  int? pageCount;
   String? publishedDate;
   String? description;
+
   List<IndustryIdentifiers>? industryIdentifiers;
-  int? pageCount;
   String? printType;
-  ImageLinks? imageLinks;
   String? language;
   String? previewLink;
   String? infoLink;
 
+  String getThumbnail({bool small = true}) {
+    if (imageLinks!=null && imageLinks!.smallThumbnail != null) {
+      return imageLinks!.smallThumbnail!;
+    } else {
+      return '';
+    }
+  }
+
   @override
   String toString() {
-    return 'VolumeInfo{title: $title, authors: $authors, publisher: $publisher, publishedDate: $publishedDate, description: $description, industryIdentifiers: $industryIdentifiers, pageCount: $pageCount, printType: $printType, imageLinks: $imageLinks, language: $language, previewLink: $previewLink, infoLink: $infoLink}';
+    return 'VolumeInfo{title: $title, authors: $authors, publisher: $publisher, imageLinks: $imageLinks, publishedDate: $publishedDate, description: $description, industryIdentifiers: $industryIdentifiers, pageCount: $pageCount, printType: $printType, language: $language, previewLink: $previewLink, infoLink: $infoLink}';
   }
 
   VolumeInfo(
       {this.title,
-        this.authors,
-        this.publisher,
-        this.publishedDate,
-        this.description,
-        this.industryIdentifiers,
-        this.pageCount,
-        this.printType,
-        this.imageLinks,
-        this.language,
-        this.previewLink,
-        this.infoLink});
+      this.authors,
+      this.publisher,
+      this.publishedDate,
+      this.description,
+      this.industryIdentifiers,
+      this.pageCount,
+      this.printType,
+      this.imageLinks,
+      this.language,
+      this.previewLink,
+      this.infoLink});
 
   VolumeInfo.fromJson(Map<String, dynamic> json) {
     title = json['title'] as String?;
-    if (json['authors']!=null) {
+    if (json['authors'] != null) {
       authors = json['authors'].cast<String>();
     }
     publisher = json['publisher'] as String?;
@@ -129,19 +155,14 @@ class IndustryIdentifiers {
   }
 }
 
+@HiveType(typeId: 2)
 class ImageLinks {
+  @HiveField(0)
   String? smallThumbnail;
+  @HiveField(1)
   String? thumbnail;
 
   ImageLinks({this.smallThumbnail, this.thumbnail});
-
-  String getSmallThumbnail(){
-    if(smallThumbnail!=null) {
-      return smallThumbnail!;
-    } else {
-      return '';
-    }
-  }
 
   ImageLinks.fromJson(Map<String, dynamic> json) {
     smallThumbnail = json['smallThumbnail'] as String?;
@@ -153,5 +174,10 @@ class ImageLinks {
     data['smallThumbnail'] = this.smallThumbnail;
     data['thumbnail'] = this.thumbnail;
     return data;
+  }
+
+  @override
+  String toString() {
+    return 'ImageLinks{smallThumbnail: $smallThumbnail, thumbnail: $thumbnail}';
   }
 }

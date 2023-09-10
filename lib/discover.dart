@@ -62,7 +62,7 @@ Future<GBookList> fetchBooks(http.Client client) async {
   if (!query.isEmpty) {
     final response = await client.get(Uri.parse( getSearchUrl(query) ));
 
-    //print('fetchBooks response=${response.body}');
+    print('fetchBooks response=${response.body}');
 
     // Use the compute function to run parsePhotos in a separate isolate.
     return compute(parseBooks, response.body);
@@ -76,10 +76,10 @@ GBookList parseBooks(String responseBody) {
   print('---parseBooks()---');
 
   final parsed_json = jsonDecode(responseBody);
-  //print('parsed_json=$parsed_json');
+  print('parsed_json=$parsed_json');
 
   final parsed_gbookList = GBookList.fromJson(parsed_json);
-  //print('parsed_gbookList=${parsed_gbookList.toString()}');
+  print('parsed_gbookList=${parsed_gbookList.toString()}');
 
   return parsed_gbookList;
 }
