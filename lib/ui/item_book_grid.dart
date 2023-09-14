@@ -21,7 +21,7 @@ class BooksGrid extends StatelessWidget {
         },
         gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
           crossAxisCount: 3,
-          mainAxisExtent: 225,
+          mainAxisExtent: 425, //todo: make platform specific, mac/desktop=425, mobile=225
           mainAxisSpacing: 4.0,
           crossAxisSpacing: 4.0,
         ),
@@ -58,8 +58,8 @@ class ItemBooksGrid extends StatelessWidget {
             SizedBox(
               width: double.infinity,
               child: ExtendedImage.network(
-                gBook.volumeInfo!.getThumbnail(),
-                height: 150,
+                gBook.volumeInfo!.getThumbnail(small: false),
+                height: 350, //todo: make platform specific, mac/desktop=350, mobile=150
                 fit: BoxFit.cover,
                 shape: BoxShape.rectangle,
                 borderRadius: const BorderRadius.all(Radius.circular(10.0)),
