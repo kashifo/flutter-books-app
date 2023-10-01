@@ -97,14 +97,14 @@ class _BookDetailState extends State<BookDetail> {
                   onPressed: () {
                     print('read pressed - ${gBook.volumeInfo?.previewLink}');
 
-                    /*Navigator.push(
+                    Navigator.push(
                         context,
                         MaterialPageRoute(
                             builder: (context) => MyWebView(
                                   inUrl: gBook.volumeInfo?.previewLink,
-                                )));*/
+                                )));
 
-                    Navigator.push(
+                    /*Navigator.push(
                       context,
                       MaterialPageRoute(builder: (context) => HiveBoxesView(
                           hiveBoxes: allBoxes,
@@ -112,7 +112,7 @@ class _BookDetailState extends State<BookDetail> {
                           {
                             print(errorMessage)
                           })),
-                    );
+                    );*/
                   },
                 ),
               ),

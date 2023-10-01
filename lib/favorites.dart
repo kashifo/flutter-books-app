@@ -1,3 +1,4 @@
+import 'package:books_app/models/GBook.dart';
 import 'package:books_app/models/GBookList.dart';
 import 'package:books_app/ui/item_book_list.dart';
 import 'package:flutter/material.dart';
@@ -38,15 +39,19 @@ class _FavoritesState extends State<Favorites> {
               child: Text("You haven't liked any books yet"),
             );
           } else {
+            print("saved books size: ${dataBox.length}");
+
             return ListView.builder(
               itemCount: dataBox.length,
               itemBuilder: (context, index) {
                 var box = value;
                 var key = box.keyAt(index);
-                var getData = box.get(key);
-                print("itemBook: $getData");
 
-                return ItemBookList(gBook: getData);
+                GBook curBook = box.get(key);
+                curBook.isFavorite = 1;
+                print("itemBook: $curBook");
+
+                return ItemBookList(gBook: curBook);
               },
             );
           }

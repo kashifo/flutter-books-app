@@ -4,32 +4,71 @@ import 'package:books_app/models/GBook.dart';
 import 'package:books_app/models/GBookList.dart';
 import 'package:extended_image/extended_image.dart';
 import 'package:flutter/material.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 
-class BooksList extends StatelessWidget {
+class BooksList extends StatefulWidget {
   const BooksList({super.key, required this.gBookList});
 
   final GBookList gBookList;
 
   @override
+  State<BooksList> createState() => _BooksListState();
+}
+
+class _BooksListState extends State<BooksList> {
+  late Box dataBox;
+
+  @override
+  void initState() {
+    super.initState();
+    dataBox = Hive.box('favorites');
+  }
+
+  @override
   Widget build(BuildContext context) {
     return ListView.builder(
-      itemCount: gBookList.items?.length,
+      itemCount: widget.gBookList.items?.length,
       itemBuilder: (context, index) {
-        return ItemBookList(gBook: gBookList.items![index]);
+
+        GBook curBook = widget.gBookList.items![index];
+
+        var where = dataBox.get(curBook.id);
+        if(where!=null){
+          curBook.isFavorite = 1;
+        }
+
+        return ItemBookList(gBook: curBook);
       },
     );
   }
 }
 
-class ItemBookList extends StatelessWidget {
+class ItemBookList extends StatefulWidget {
   const ItemBookList({super.key, required this.gBook});
 
   final GBook gBook;
 
   @override
-  Widget build(BuildContext context) {
+  State<ItemBookList> createState() => _ItemBookListState();
+}
 
-    print("thumb:${gBook.volumeInfo!.getThumbnail()}");
+class _ItemBookListState extends State<ItemBookList> {
+  bool isLiked = false;
+
+  @override
+  void initState() {
+    super.initState();
+
+    if (widget.gBook.isFavorite == 1) {
+      isLiked = true;
+    } else {
+      isLiked = false;
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    print("thumb:${widget.gBook.volumeInfo!.getThumbnail()}");
 
     return InkWell(
       onTap: () {
@@ -37,25 +76,24 @@ class ItemBookList extends StatelessWidget {
             context,
             MaterialPageRoute(
                 builder: (context) => BookDetail(
-                  bookId: gBook.id!,
-                )));
+                      bookId: widget.gBook.id!,
+                    )));
       },
       child: Container(
         height: 100,
         child: Card(
           color: Colors.white,
-          margin: EdgeInsets.fromLTRB(8, 8, 8, 0),
+          margin: const EdgeInsets.fromLTRB(8, 8, 8, 0),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(8),
           ),
           child: Row(
             children: [
               ExtendedImage.network(
-                gBook.volumeInfo!.getThumbnail(),
+                widget.gBook.volumeInfo!.getThumbnail(),
                 width: 100,
                 height: 100,
               ),
-
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -64,7 +102,7 @@ class ItemBookList extends StatelessWidget {
                       height: 4,
                     ),
                     Text(
-                      gBook.volumeInfo!.title!,
+                      widget.gBook.volumeInfo!.title!,
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
                       style: const TextStyle(
@@ -76,7 +114,7 @@ class ItemBookList extends StatelessWidget {
                       height: 4,
                     ),
                     Text(
-                      getAuthors(gBook.volumeInfo!.authors),
+                      getAuthors(widget.gBook.volumeInfo!.authors),
                       overflow: TextOverflow.ellipsis,
                       textAlign: TextAlign.left,
                       style: const TextStyle(
@@ -88,7 +126,7 @@ class ItemBookList extends StatelessWidget {
                       height: 2,
                     ),
                     Text(
-                      handleNull(gBook.volumeInfo?.publisher),
+                      handleNull(widget.gBook.volumeInfo?.publisher),
                       overflow: TextOverflow.ellipsis,
                       textAlign: TextAlign.left,
                       style: const TextStyle(
@@ -99,7 +137,37 @@ class ItemBookList extends StatelessWidget {
                     ),
                   ],
                 ),
-              )
+              ),
+              IconButton(
+                icon: Icon(
+                    color: Colors.blue,
+                    isLiked ? Icons.favorite : Icons.favorite_border),
+                onPressed: () {
+                  Box dataBox = Hive.box('favorites');
+
+                  print('fav pressed: ${widget.gBook.isFavorite}');
+
+                  if (widget.gBook.isFavorite == 1) {
+                    dataBox.delete(widget.gBook.id);
+                  } else {
+                    dataBox.put(widget.gBook.id, widget.gBook);
+                  }
+
+                  setState(() {
+                    isLiked = !isLiked;
+                  });
+
+                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                    content: Text(isLiked
+                        ? 'Added to your favorites'
+                        : 'Removed from your favorites'),
+                    duration: const Duration(seconds: 1),
+                  ));
+                }, //onPressed
+              ),
+              const SizedBox(
+                width: 12,
+              ),
             ],
           ),
         ),

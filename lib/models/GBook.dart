@@ -8,6 +8,7 @@ class GBook extends HiveObject {
   String? id;
   @HiveField(1)
   VolumeInfo? volumeInfo;
+  int isFavorite = 0;
 
   GBook({required this.id, required this.volumeInfo});
 
