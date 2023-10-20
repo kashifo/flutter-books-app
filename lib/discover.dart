@@ -1,6 +1,7 @@
 import 'dart:convert';
+import 'dart:math';
 
-import 'package:books_app/commons.dart';
+import 'package:books_app/utils/commons.dart';
 import 'package:books_app/models/GBookList.dart';
 import 'package:books_app/ui/item_book_grid.dart';
 import 'package:easy_search_bar/easy_search_bar.dart';
@@ -10,7 +11,8 @@ import 'package:http/http.dart' as http;
 
 import 'ui/item_book_list.dart';
 
-String query = 'steve joba';
+List<String> queries = ['Walter Isaacson', 'Paulo Coelho', 'Dale Carnegie', 'Robert Greene'];
+String query = queries[ Random().nextInt(queries.length-1) ];
 
 class Discover extends StatefulWidget {
   const Discover({super.key});

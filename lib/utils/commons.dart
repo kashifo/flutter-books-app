@@ -1,7 +1,15 @@
 import 'package:flutter/material.dart';
+// import 'secrets.dart';
 
 String getSearchUrl(String query){
-  return 'https://www.googleapis.com/books/v1/volumes?q=$query&startIndex=0&maxResults=20&key=AIzaSyB54032jqT1-O2USaaEuZlwiSGpmjaWCPg';
+
+  //TODO: Comment this if clause if it is not commented, if you've cloned this repo as public or facing error. Or add your own api key for accessing Google Books in the below variable
+  //var API_KEY_GOOGLE_SECRET = '';
+  /*if(API_KEY_GOOGLE_SECRET!=null){
+    return 'https://www.googleapis.com/books/v1/volumes?q=$query&startIndex=0&maxResults=20&key=$API_KEY_GOOGLE_SECRET';
+  }*/
+
+  return 'https://www.googleapis.com/books/v1/volumes?q=$query&startIndex=0&maxResults=20';
 }
 
 String getBookDetailUrl(String bookId){

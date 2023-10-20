@@ -1,7 +1,7 @@
 import 'dart:convert';
 
-import 'package:books_app/MyWebView.dart';
-import 'package:books_app/commons.dart';
+import 'package:books_app/utils/MyWebView.dart';
+import 'package:books_app/utils/commons.dart';
 import 'package:extended_image/extended_image.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
