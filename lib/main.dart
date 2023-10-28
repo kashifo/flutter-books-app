@@ -3,12 +3,12 @@ import 'package:books_app/discover.dart';
 import 'package:books_app/favorites.dart';
 import 'package:books_app/models/GBook.dart';
 import 'package:books_app/search.dart';
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:path_provider/path_provider.dart';
 
 void main() async {
-
   await Hive.initFlutter();
   Hive.registerAdapter(ImageLinksAdapter());
   Hive.registerAdapter(VolumeInfoAdapter());
@@ -16,9 +16,7 @@ void main() async {
 
   await Hive.openBox('favorites');
 
-  runApp(
-      const MyApp()
-  );
+  runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
@@ -33,13 +31,12 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         fontFamily: 'Jost',
         colorScheme: ColorScheme.fromSwatch(
-            primarySwatch: getMaterialColor('0065ff'), backgroundColor: Colors.white),
+            primarySwatch: getMaterialColor('0065ff'),
+            backgroundColor: Colors.white),
         useMaterial3: true,
       ),
-
     );
   }
-
 }
 
 class TabView extends StatefulWidget {
@@ -50,6 +47,49 @@ class TabView extends StatefulWidget {
 }
 
 class _TabViewState extends State<TabView> {
+  var subscription;
+
+  @override
+  void initState() {
+    super.initState();
+
+    subscription = Connectivity()
+        .onConnectivityChanged
+        .listen((ConnectivityResult result) {
+      print('network changed');
+      checkNetwork();
+    });
+
+  }
+
+  void checkNetwork({bool notifyOnConnectAlso = false}) async {
+    print('checkNetwork');
+
+    final connectivityResult = await (Connectivity().checkConnectivity());
+    print('checkNetwork connectivityResult=$connectivityResult');
+
+    if (connectivityResult == ConnectivityResult.mobile ||
+        connectivityResult == ConnectivityResult.wifi) {
+
+      if(notifyOnConnectAlso) {
+        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+          content: Text('Internet connected, please refresh if needed.'),
+        ));
+      }
+
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+        content: Text('No Internet connection'),
+      ));
+    }
+  }
+
+  @override
+  void dispose() {
+    subscription.cancel();
+    super.dispose();
+  }
+
   final List<Widget> children = [
     const Discover(),
     const Search(),
@@ -61,7 +101,6 @@ class _TabViewState extends State<TabView> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: children[tabIndex],
-
       bottomNavigationBar: BottomNavigationBar(
         showSelectedLabels: false,
         showUnselectedLabels: false,
@@ -84,8 +123,7 @@ class _TabViewState extends State<TabView> {
         ],
         currentIndex: tabIndex,
         selectedItemColor: getIntColor("0065ff"),
-
-        onTap: (int index){
+        onTap: (int index) {
           setState(() {
             print('onTapped=$index');
             tabIndex = index;
@@ -95,4 +133,3 @@ class _TabViewState extends State<TabView> {
     );
   }
 }
-

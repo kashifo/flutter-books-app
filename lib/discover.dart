@@ -1,6 +1,8 @@
 import 'dart:convert';
 import 'dart:math';
 
+import 'package:books_app/ui/error_view.dart';
+import 'package:books_app/ui/no_network.dart';
 import 'package:books_app/utils/commons.dart';
 import 'package:books_app/models/GBookList.dart';
 import 'package:books_app/ui/item_book_grid.dart';
@@ -11,8 +13,13 @@ import 'package:http/http.dart' as http;
 
 import 'ui/item_book_list.dart';
 
-List<String> queries = ['Walter Isaacson', 'Paulo Coelho', 'Dale Carnegie', 'Robert Greene'];
-String query = queries[ Random().nextInt(queries.length-1) ];
+List<String> queries = [
+  'Walter Isaacson',
+  'Paulo Coelho',
+  'Dale Carnegie',
+  'Robert Greene'
+];
+String query = queries[Random().nextInt(queries.length - 1)];
 
 class Discover extends StatefulWidget {
   const Discover({super.key});
@@ -28,11 +35,13 @@ class DiscoverState extends State<Discover> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Discover', style: TextStyle(fontFamily: 'Jost', fontWeight: FontWeight.w600),),
+        title: const Text(
+          'Discover',
+          style: TextStyle(fontFamily: 'Jost', fontWeight: FontWeight.w600),
+        ),
         backgroundColor: Colors.white,
         foregroundColor: Colors.black,
       ),
-
       body: FutureBuilder<GBookList>(
         future: fetchBooks(http.Client()),
         builder: (context, snapshot) {
@@ -41,9 +50,17 @@ class DiscoverState extends State<Discover> {
               child: Text('Search something'),
             );
           } else if (snapshot.hasError) {
-            return Center(
-              child: Text('An error has occurred! \n\n ${snapshot.error}'),
-            );
+            var error = snapshot.error.toString();
+
+            if (error != null && error.contains('SocketException')) {
+              return noNetworkWidget();
+            } else {
+              return errorViewWidget(
+                  'Something went wrong',
+                  'Please try again later, \nif error persists contact us.',
+                  error);
+            }
+
           } else if (snapshot.hasData &&
               snapshot.data?.items != null &&
               snapshot.data!.items!.isNotEmpty) {
@@ -62,7 +79,7 @@ class DiscoverState extends State<Discover> {
 Future<GBookList> fetchBooks(http.Client client) async {
   print('---fetchBooks()---');
   if (!query.isEmpty) {
-    final response = await client.get(Uri.parse( getSearchUrl(query) ));
+    final response = await client.get(Uri.parse(getSearchUrl(query)));
 
     print('fetchBooks response=${response.body}');
 
@@ -85,5 +102,3 @@ GBookList parseBooks(String responseBody) {
 
   return parsed_gbookList;
 }
-
-
