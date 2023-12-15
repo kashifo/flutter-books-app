@@ -8,12 +8,14 @@ class GBook extends HiveObject {
   String? id;
   @HiveField(1)
   VolumeInfo? volumeInfo;
+  @HiveField(2)
   int isFavorite = 0;
 
-  GBook({required this.id, required this.volumeInfo});
+  GBook({required this.id, required this.volumeInfo, required this.isFavorite});
 
   GBook.fromJson(Map<String, dynamic> json) {
     id = json['id'];
+    isFavorite = json['isFavorite'];
     volumeInfo = json['volumeInfo'] != null
         ? new VolumeInfo.fromJson(json['volumeInfo'])
         : null;
@@ -22,6 +24,7 @@ class GBook extends HiveObject {
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
     data['id'] = this.id;
+    data['isFavorite'] = this.isFavorite;
     if (this.volumeInfo != null) {
       data['volumeInfo'] = this.volumeInfo!.toJson();
     }
@@ -30,7 +33,7 @@ class GBook extends HiveObject {
 
   @override
   String toString() {
-    return 'GBook{id: $id, volumeInfo: $volumeInfo}';
+    return 'GBook{id: $id, volumeInfo: $volumeInfo, isFavorite: $isFavorite}';
   }
 }
 

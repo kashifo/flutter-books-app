@@ -6,7 +6,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
-import 'ui/item_book_list.dart';
+import '../widgets/item_book_list.dart';
 
 String query = '';
 

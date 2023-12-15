@@ -13,7 +13,13 @@ String getSearchUrl(String query){
 }
 
 String getBookDetailUrl(String bookId){
-  return 'https://www.googleapis.com/books/v1/volumes/$bookId?key=AIzaSyB54032jqT1-O2USaaEuZlwiSGpmjaWCPg';
+  //TODO: Comment this if clause if it is not commented, if you've cloned this repo as public or facing error. Or add your own api key for accessing Google Books in the below variable
+  //var API_KEY_GOOGLE_SECRET = '';
+  /*if(API_KEY_GOOGLE_SECRET!=null){
+    return 'https://www.googleapis.com/books/v1/volumes/$bookId?key=$API_KEY_GOOGLE_SECRET';
+  }*/
+
+  return 'https://www.googleapis.com/books/v1/volumes/$bookId';
 }
 
 String handleNull(String? str){

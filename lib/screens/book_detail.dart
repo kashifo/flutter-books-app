@@ -11,7 +11,8 @@ import 'package:hive_ui/hive_ui.dart';
 import 'package:hive_ui/boxes_view.dart';
 
 import 'package:http/http.dart' as http;
-import 'models/GBook.dart';
+
+import '../models/GBook.dart';
 
 class BookDetail extends StatefulWidget {
   const BookDetail({super.key, required this.bookId});
@@ -97,14 +98,14 @@ class _BookDetailState extends State<BookDetail> {
                   onPressed: () {
                     print('read pressed - ${gBook.volumeInfo?.previewLink}');
 
-                    Navigator.push(
+                    /*Navigator.push(
                         context,
                         MaterialPageRoute(
                             builder: (context) => MyWebView(
                                   inUrl: gBook.volumeInfo?.previewLink,
-                                )));
+                                )));*/
 
-                    /*Navigator.push(
+                    Navigator.push(
                       context,
                       MaterialPageRoute(builder: (context) => HiveBoxesView(
                           hiveBoxes: allBoxes,
@@ -112,7 +113,7 @@ class _BookDetailState extends State<BookDetail> {
                           {
                             print(errorMessage)
                           })),
-                    );*/
+                    );
                   },
                 ),
               ),
@@ -127,6 +128,7 @@ class _BookDetailState extends State<BookDetail> {
                   if (isLiked) {
                     dataBox.delete(widget.bookId);
                   } else {
+                    gBook.isFavorite = 1;
                     dataBox.put(widget.bookId, gBook);
                   }
 

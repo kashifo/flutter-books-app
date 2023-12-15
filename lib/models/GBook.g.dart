@@ -19,17 +19,20 @@ class GBookAdapter extends TypeAdapter<GBook> {
     return GBook(
       id: fields[0] as String?,
       volumeInfo: fields[1] as VolumeInfo?,
+      isFavorite: fields[2] as int,
     );
   }
 
   @override
   void write(BinaryWriter writer, GBook obj) {
     writer
-      ..writeByte(2)
+      ..writeByte(3)
       ..writeByte(0)
       ..write(obj.id)
       ..writeByte(1)
-      ..write(obj.volumeInfo);
+      ..write(obj.volumeInfo)
+      ..writeByte(2)
+      ..write(obj.isFavorite);
   }
 
   @override

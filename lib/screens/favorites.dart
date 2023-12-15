@@ -1,6 +1,6 @@
 import 'package:books_app/models/GBook.dart';
 import 'package:books_app/models/GBookList.dart';
-import 'package:books_app/ui/item_book_list.dart';
+import 'package:books_app/widgets/item_book_list.dart';
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 
@@ -48,7 +48,7 @@ class _FavoritesState extends State<Favorites> {
                 var key = box.keyAt(index);
 
                 GBook curBook = box.get(key);
-                curBook.isFavorite = 1;
+                //curBook.isFavorite = 1;
                 print("itemBook: $curBook");
 
                 return ItemBookList(gBook: curBook);

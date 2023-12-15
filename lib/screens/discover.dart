@@ -1,17 +1,17 @@
 import 'dart:convert';
 import 'dart:math';
 
-import 'package:books_app/ui/error_view.dart';
-import 'package:books_app/ui/no_network.dart';
+import 'package:books_app/widgets/error_view.dart';
 import 'package:books_app/utils/commons.dart';
 import 'package:books_app/models/GBookList.dart';
-import 'package:books_app/ui/item_book_grid.dart';
+import 'package:books_app/widgets/item_book_grid.dart';
 import 'package:easy_search_bar/easy_search_bar.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
-import 'ui/item_book_list.dart';
+import '../widgets/item_book_list.dart';
+import '../widgets/no_network.dart';
 
 List<String> queries = [
   'Walter Isaacson',
