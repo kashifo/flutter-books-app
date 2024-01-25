@@ -1,8 +1,9 @@
+import 'package:books_app/screens/book_detail_v2.dart';
+import 'package:books_app/screens/search.dart';
 import 'package:books_app/utils/commons.dart';
-import 'package:books_app/discover.dart';
-import 'package:books_app/favorites.dart';
+import 'package:books_app/screens/discover.dart';
+import 'package:books_app/screens/favorites.dart';
 import 'package:books_app/models/GBook.dart';
-import 'package:books_app/search.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
@@ -25,7 +26,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      home: const TabView(),
+      home: const BookDetailV2(),
       title: 'Flutter BooksApp',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
