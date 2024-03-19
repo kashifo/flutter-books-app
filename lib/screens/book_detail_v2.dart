@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../utils/ResponsiveUtils.dart';
 import '../utils/commons.dart';
 
 class BookDetailV2 extends StatefulWidget {
@@ -17,7 +18,8 @@ class _BookDetailV2State extends State<BookDetailV2> {
         headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
           return <Widget>[
             SliverAppBar(
-              expandedHeight: ResponsiveUtils.getScrWidth(context),
+              // expandedHeight: ResponsiveUtils.getScrWidth(context),
+              expandedHeight: 300,
               floating: false,
               pinned: true,
               leading: const Icon(Icons.arrow_back_rounded),
@@ -54,7 +56,6 @@ class _BookDetailV2State extends State<BookDetailV2> {
               flexibleSpace: FlexibleSpaceBar(
                   background: Container(
                       color: getIntColor("FCF4C5"),
-                      padding: const EdgeInsets.all(1),
                       child: Center(
                           child: Container(
                         decoration: const BoxDecoration(
@@ -74,15 +75,186 @@ class _BookDetailV2State extends State<BookDetailV2> {
                           // "https://books.google.com/books/content?id=FzVjBgAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api",
                           "https://books.google.com/books/content?id=z_RoMAEACAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api",
                           fit: BoxFit.fitHeight,
+                          height: 200,
                         ),
                       )))),
             ),
           ];
         },
-        body: Center(
-          child: Text('New dish detail screen is coming'),
+        body: Column(
+          children: [
+            const SizedBox(
+              height: 8,
+            ),
+            Text(
+              // getAuthors(gBook.volumeInfo!.authors),
+              "Paulo Coelho's",
+              overflow: TextOverflow.ellipsis,
+              textAlign: TextAlign.left,
+              style: const TextStyle(
+                  fontSize: 12,
+                  fontWeight: FontWeight.normal,
+                  fontFamily: 'Jost'),
+            ),
+            const SizedBox(
+              height: 2,
+            ),
+            Text(
+              'The Alchemist',
+              maxLines: 3,
+              overflow: TextOverflow.ellipsis,
+              style: const TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                  fontFamily: 'Jost'),
+            ),
+            const SizedBox(
+              height: 2,
+            ),
+            Text(
+              // handleNull(gBook.volumeInfo?.publisher),
+              'by Simon & Schuster',
+              overflow: TextOverflow.ellipsis,
+              textAlign: TextAlign.left,
+              style: const TextStyle(
+                  fontSize: 12,
+                  fontWeight: FontWeight.normal,
+                  fontFamily: 'Jost'),
+            ),
+            SizedBox(
+              height: 16,
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                greyBox('4.1', 'Rating'),
+                greyBox('5.4m', 'Read'),
+                greyBox('59k', 'Reviews'),
+                greyBox('14k', 'Quotes'),
+              ],
+            ),
+            SizedBox(
+              height: 16,
+            ),
+            Container(
+              margin: EdgeInsets.symmetric(horizontal: 16),
+              padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+              decoration: BoxDecoration(
+                color: Colors.blueAccent,
+                shape: BoxShape.rectangle,
+                borderRadius: BorderRadius.circular(8),
+
+              ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(
+                    Icons.favorite_border,
+                    color: Colors.white,
+                  ),
+                  SizedBox(
+                    width: 16,
+                  ),
+                  Text(
+                    'Add to Favorites',
+                    style: TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.bold,
+                      color: Colors.white
+                    ),
+                  )
+                ],
+              ),
+            ),
+            Container(
+              height: 4,
+              margin: EdgeInsets.only(top: 16, bottom: 16),
+              color: Colors.grey.shade300,
+            ),
+
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      roundText('Classics'),
+                      roundText('Fiction'),
+                      roundText('Historical'),
+                      roundText('Sci-Fi'),
+                    ]
+                ),
+
+            SizedBox(
+              height: 4,
+            ),
+
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              child: Text(
+                "This is the description of the book named Alchemist, It's main story is 'If you really wish for something the whole world works for you",
+                textAlign: TextAlign.left,
+                style: const TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.normal,
+                    fontFamily: 'Jost'),
+              ),
+            ),
+          ],
         ),
       ),
     );
   }
+}
+
+
+
+Widget roundText(String str){
+  return Container(
+    padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+    decoration: BoxDecoration(
+        border: Border.all(
+          color: Colors.black26,
+        ),
+        borderRadius: BorderRadius.all(Radius.circular(20))
+
+    ),
+    child: Column(
+      children: [
+        Text(
+          str,
+          style: TextStyle(
+              fontWeight: FontWeight.bold,
+              fontSize: 12
+          ),
+        )
+      ],
+    ),
+  );
+}
+
+Widget greyBox(String line1, String line2){
+  return Container(
+    padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+    decoration: BoxDecoration(
+      color: Colors.grey.shade300,
+      shape: BoxShape.rectangle,
+      borderRadius: BorderRadius.circular(8),
+
+    ),
+    child: Column(
+      children: [
+        Text(
+          line1,
+          style: TextStyle(
+              fontWeight: FontWeight.bold,
+              fontSize: 12
+          ),
+        ),
+        Text(
+          line2,
+          style: TextStyle(
+              fontSize: 10
+          ),
+        )
+      ],
+    ),
+  );
 }

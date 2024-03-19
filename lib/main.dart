@@ -26,7 +26,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      home: const BookDetailV2(),
+      home: const TabView(),
       title: 'Flutter BooksApp',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
