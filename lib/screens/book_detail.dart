@@ -52,7 +52,7 @@ class _BookDetailState extends State<BookDetail> {
         title: const Text('Book Detail'),
         elevation: 2.0,
       ),
-      body: FutureBuilder<GBook>(
+      body: FutureBuilder<GBook>( 
         future: fetchBookDetail(widget.bookId, http.Client()),
         builder: (context, snapshot) {
           if (snapshot.hasError) {

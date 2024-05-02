@@ -1,16 +1,37 @@
+import 'package:books_app/models/GBook.dart';
 import 'package:flutter/material.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 
 import '../utils/ResponsiveUtils.dart';
 import '../utils/commons.dart';
 
 class BookDetailV2 extends StatefulWidget {
-  const BookDetailV2({super.key});
+  const BookDetailV2({super.key, required this.bookId});
+
+  final String bookId;
 
   @override
   State<BookDetailV2> createState() => _BookDetailV2State();
 }
 
 class _BookDetailV2State extends State<BookDetailV2> {
+  late GBook gBook;
+  late Box dataBox;
+  bool isLiked = false;
+
+  @override
+  void initState() {
+    super.initState();
+
+    /*dataBox = Hive.box('favorites');
+
+    var where = dataBox.get(widget.bookId);
+    print('isFav=$where');
+    if(where!=null){
+      isLiked = true;
+    }*/
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -172,18 +193,23 @@ class _BookDetailV2State extends State<BookDetailV2> {
               color: Colors.grey.shade300,
             ),
 
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      roundText('Classics'),
-                      roundText('Fiction'),
-                      roundText('Historical'),
-                      roundText('Sci-Fi'),
-                    ]
-                ),
+            Container(
+              padding: const EdgeInsets.only(left: 16),
+              height: 35,
+              child: ListView(
+                scrollDirection: Axis.horizontal,
+                      children: [
+                        roundText('Classics'),
+                        roundText('Fiction'),
+                        roundText('Historical'),
+                        roundText('Sci-Fi'),
+                        roundText('Sci-Fi'),
+                      ]
+                  ),
+            ),
 
             SizedBox(
-              height: 4,
+              height: 8,
             ),
 
             Padding(
@@ -208,6 +234,7 @@ class _BookDetailV2State extends State<BookDetailV2> {
 
 Widget roundText(String str){
   return Container(
+    margin: EdgeInsets.only(right: 8),
     padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
     decoration: BoxDecoration(
         border: Border.all(
@@ -216,16 +243,12 @@ Widget roundText(String str){
         borderRadius: BorderRadius.all(Radius.circular(20))
 
     ),
-    child: Column(
-      children: [
-        Text(
-          str,
-          style: TextStyle(
-              fontWeight: FontWeight.bold,
-              fontSize: 12
-          ),
-        )
-      ],
+    child: Text(
+      str,
+      style: TextStyle(
+          fontWeight: FontWeight.bold,
+          fontSize: 12
+      ),
     ),
   );
 }

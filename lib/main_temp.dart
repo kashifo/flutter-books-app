@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 
 void main() {
   runApp(MaterialApp(
-    home: const BookDetailV2(),
+    home: const BookDetailV2(bookId: 'lassldf'),
 
     debugShowCheckedModeBanner: false,
     theme: ThemeData(
