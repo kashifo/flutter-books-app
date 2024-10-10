@@ -54,12 +54,12 @@ class _TabViewState extends State<TabView> {
   void initState() {
     super.initState();
 
-    subscription = Connectivity()
+/*    subscription = Connectivity()
         .onConnectivityChanged
         .listen((ConnectivityResult result) {
       print('network changed');
       checkNetwork();
-    });
+    });*/
 
   }
 

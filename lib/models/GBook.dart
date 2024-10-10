@@ -14,8 +14,10 @@ class GBook extends HiveObject {
   GBook({required this.id, required this.volumeInfo, required this.isFavorite});
 
   GBook.fromJson(Map<String, dynamic> json) {
+    print('GBook fromJson');
+
     id = json['id'];
-    isFavorite = json['isFavorite'];
+    isFavorite = 0;
     volumeInfo = json['volumeInfo'] != null
         ? new VolumeInfo.fromJson(json['volumeInfo'])
         : null;
@@ -90,31 +92,40 @@ class VolumeInfo {
       this.infoLink});
 
   VolumeInfo.fromJson(Map<String, dynamic> json) {
-    title = json['title'] as String?;
-    if (json['authors'] != null) {
-      authors = json['authors'].cast<String>();
-    }
-    publisher = json['publisher'] as String?;
-    publishedDate = json['publishedDate'] as String?;
-    description = json['description'] as String?;
-    if (json['industryIdentifiers'] != null) {
-      industryIdentifiers = <IndustryIdentifiers>[];
-      json['industryIdentifiers'].forEach((v) {
-        industryIdentifiers!.add(new IndustryIdentifiers.fromJson(v));
-      });
-    }
-    pageCount = json['pageCount'] as int?;
-    printType = json['printType'] as String?;
+    print('GBook VolumeInfo fromJson');
 
-    if (json['imageLinks'] != null) {
-      imageLinks = ImageLinks.fromJson(json['imageLinks']);
-    } else {
-      imageLinks = ImageLinks();
+    try {
+      title = json['title'] as String?;
+      print('parsed_json title=$title');
+
+      if (json['authors'] != null) {
+            authors = json['authors'].cast<String>();
+          }
+      publisher = json['publisher'] as String?;
+      publishedDate = json['publishedDate'] as String?;
+      description = json['description'] as String?;
+      if (json['industryIdentifiers'] != null) {
+            industryIdentifiers = <IndustryIdentifiers>[];
+            json['industryIdentifiers'].forEach((v) {
+              industryIdentifiers!.add(new IndustryIdentifiers.fromJson(v));
+            });
+          }
+      pageCount = json['pageCount'] as int?;
+      printType = json['printType'] as String?;
+
+      if (json['imageLinks'] != null) {
+            imageLinks = ImageLinks.fromJson(json['imageLinks']);
+          } else {
+            imageLinks = ImageLinks();
+          }
+
+      language = json['language'] as String?;
+      previewLink = json['previewLink'] as String?;
+      infoLink = json['infoLink'] as String?;
+    } catch (e) {
+      print(e);
     }
 
-    language = json['language'] as String?;
-    previewLink = json['previewLink'] as String?;
-    infoLink = json['infoLink'] as String?;
   }
 
   Map<String, dynamic> toJson() {

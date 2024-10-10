@@ -12,7 +12,6 @@ void main() {
       fontFamily: 'Jost',
       colorScheme: ColorScheme.fromSwatch(
           primarySwatch: Colors.brown,
-          primaryColorDark: Colors.blue,
           accentColor: Colors.blueAccent,
           backgroundColor: Colors.grey.shade100),
       useMaterial3: true,

@@ -5,7 +5,7 @@ import 'package:books_app/widgets/error_view.dart';
 import 'package:books_app/utils/commons.dart';
 import 'package:books_app/models/GBookList.dart';
 import 'package:books_app/widgets/item_book_grid.dart';
-import 'package:easy_search_bar/easy_search_bar.dart';
+// import 'package:easy_search_bar/easy_search_bar.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
@@ -79,7 +79,10 @@ class DiscoverState extends State<Discover> {
 Future<GBookList> fetchBooks(http.Client client) async {
   print('---fetchBooks()---');
   if (!query.isEmpty) {
-    final response = await client.get(Uri.parse(getSearchUrl(query)));
+    var uri = Uri.parse(getSearchUrl(query));
+    print('fetchBooks uri=${uri.toString()}');
+
+    final response = await client.get(uri);
 
     print('fetchBooks response=${response.body}');
 
@@ -96,6 +99,7 @@ GBookList parseBooks(String responseBody) {
 
   final parsed_json = jsonDecode(responseBody);
   print('parsed_json=$parsed_json');
+  print('parsed_json completed');
 
   final parsed_gbookList = GBookList.fromJson(parsed_json);
   print('parsed_gbookList=${parsed_gbookList.toString()}');

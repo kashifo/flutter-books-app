@@ -5,7 +5,7 @@
 list(APPEND FLUTTER_PLUGIN_LIST
   connectivity_plus
   url_launcher_windows
-  webview_universal
+  webf
 )
 
 list(APPEND FLUTTER_FFI_PLUGIN_LIST

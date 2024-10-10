@@ -7,13 +7,20 @@ class GBookList {
   GBookList({this.totalItems, this.items});
 
   GBookList.fromJson(Map<String, dynamic> json) {
-    totalItems = json['totalItems'];
-    if (json['items'] != null) {
-      items = <GBook>[];
-      json['items'].forEach((v) {
-        items!.add(new GBook.fromJson(v));
-      });
+    print('GBoGBookList fromJson');
+
+    try {
+      totalItems = json['totalItems'];
+      if (json['items'] != null) {
+            items = <GBook>[];
+            json['items'].forEach((v) {
+              items!.add(new GBook.fromJson(v));
+            });
+          }
+    } catch (e) {
+      print(e);
     }
+
   }
 
   Map<String, dynamic> toJson() {

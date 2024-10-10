@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:webview_universal/webview_universal.dart';
+// import 'package:webview_universal/webview_universal.dart';
+import 'package:webview_all/webview_all.dart';
 
 class MyWebView extends StatefulWidget {
   const MyWebView({super.key, required this.inUrl});
@@ -11,7 +12,7 @@ class MyWebView extends StatefulWidget {
 }
 
 class _MyWebViewState extends State<MyWebView> {
-  WebViewController webViewController = WebViewController();
+  // WebViewController webViewController = WebViewController();
   late String urlToView;
 
   @override
@@ -24,24 +25,22 @@ class _MyWebViewState extends State<MyWebView> {
       urlToView = widget.inUrl!;
     }
 
-    webViewController.init(
+/*    webViewController.init(
       context: context,
       setState: setState,
       uri: Uri.parse(urlToView),
-    );
+    );*/
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: WebView(
-        controller: webViewController,
-      ),
+      body: Webview(url: "https://innovism.net"),
       floatingActionButton: FloatingActionButton(
         mini: true,
         child: const Icon(Icons.arrow_back),
         onPressed: () {
-          webViewController.goBackSync();
+          // webViewController.goBackSync();
         },
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.startFloat,

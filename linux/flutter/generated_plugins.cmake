@@ -4,7 +4,7 @@
 
 list(APPEND FLUTTER_PLUGIN_LIST
   url_launcher_linux
-  webview_universal
+  webf
 )
 
 list(APPEND FLUTTER_FFI_PLUGIN_LIST

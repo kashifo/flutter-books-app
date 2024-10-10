@@ -48,9 +48,9 @@ class _BooksGridState extends State<BooksGrid> {
           return ItemBooksGrid(gBook: curBook);
         },
         gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisCount: 3,
+          crossAxisCount: 5,
           // mainAxisExtent: isDesktop ? 425 : 225,
-          mainAxisExtent: 220,
+          mainAxisExtent: 280,
           mainAxisSpacing: 0,
           crossAxisSpacing: 8.0,
         ),
@@ -106,7 +106,7 @@ class _ItemBooksGridState extends State<ItemBooksGrid> {
             child: Stack(children: [
               ExtendedImage.network(
                 widget.gBook.volumeInfo!.getThumbnail(small: false),
-                height: 150,
+                height: 200,
                 // height: isDesktop ? 350 : 150,
                 //todo: make platform specific, mac/desktop=350, mobile=150
                 width: double.infinity,
