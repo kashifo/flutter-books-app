@@ -20,6 +20,20 @@ class Search extends StatefulWidget {
 }
 
 class SearchState extends State<Search> {
+  late http.Client httpClient;
+
+  @override
+  void initState() {
+    httpClient = http.Client();
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    httpClient.close();
+    super.dispose();
+  }
+  
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -38,9 +52,9 @@ class SearchState extends State<Search> {
               autofocus: true,
               keyboardType: TextInputType.text,
               textInputAction: TextInputAction.search,
-              onSubmitted: (searchVal) {
+              onSubmitted: (queryInput) {
                 setState(() {
-                  query = searchVal;
+                  query = queryInput;
                 });
               },
               decoration: InputDecoration(
@@ -62,7 +76,7 @@ class SearchState extends State<Search> {
 
           Expanded(
             child: FutureBuilder<GBookList>(
-              future: searchBooks(http.Client()),
+              future: searchBooks(httpClient),
               builder: (context, snapshot) {
                 if (query.isEmpty) {
                   return const Center(

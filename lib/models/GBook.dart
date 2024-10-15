@@ -19,8 +19,8 @@ class GBook extends HiveObject {
     id = json['id'];
     isFavorite = 0;
     volumeInfo = json['volumeInfo'] != null
-        ? new VolumeInfo.fromJson(json['volumeInfo'])
-        : null;
+        ? VolumeInfo.fromJson(json['volumeInfo'])
+        : VolumeInfo();
   }
 
   Map<String, dynamic> toJson() {

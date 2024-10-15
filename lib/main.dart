@@ -60,8 +60,7 @@ class _TabViewState extends State<TabView> {
       print('network changed');
       checkNetwork();
     });*/
-
-  }
+  }//initState
 
   void checkNetwork({bool notifyOnConnectAlso = false}) async {
     print('checkNetwork');
@@ -88,10 +87,11 @@ class _TabViewState extends State<TabView> {
   @override
   void dispose() {
     subscription.cancel();
+    Hive.close();
     super.dispose();
   }
 
-  final List<Widget> children = [
+  final List<Widget> tabScreenList = [
     const Discover(),
     const Search(),
     const Favorites()
@@ -101,7 +101,7 @@ class _TabViewState extends State<TabView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: children[tabIndex],
+      body: tabScreenList[tabIndex],
       bottomNavigationBar: BottomNavigationBar(
         showSelectedLabels: false,
         showUnselectedLabels: false,

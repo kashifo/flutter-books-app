@@ -33,8 +33,8 @@ class _FavoritesState extends State<Favorites> {
       ),
       body: ValueListenableBuilder(
         valueListenable: dataBox.listenable(),
-        builder: (context, value, child) {
-          if (value.isEmpty) {
+        builder: (context, data, child) {
+          if (data.isEmpty) {
             return const Center(
               child: Text("You haven't liked any books yet"),
             );
@@ -44,10 +44,9 @@ class _FavoritesState extends State<Favorites> {
             return ListView.builder(
               itemCount: dataBox.length,
               itemBuilder: (context, index) {
-                var box = value;
-                var key = box.keyAt(index);
+                var key = data.keyAt(index);
 
-                GBook curBook = box.get(key);
+                GBook curBook = data.get(key);
                 //curBook.isFavorite = 1;
                 print("itemBook: $curBook");
 

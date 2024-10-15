@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-Widget errorViewWidget(String title, String message, String errorDetail) {
+Widget errorViewWidget(String title, String message, String? errorDetail) {
   return Padding(
     padding: const EdgeInsets.all(16.0),
     child: Center(
@@ -25,7 +25,7 @@ Widget errorViewWidget(String title, String message, String errorDetail) {
           const SizedBox(
             height: 24,
           ),
-          Text(errorDetail,
+          Text(errorDetail??'',
               textAlign: TextAlign.center, style: TextStyle(fontSize: 10)),
         ],
       ),

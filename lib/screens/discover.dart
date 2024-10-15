@@ -8,8 +8,10 @@ import 'package:books_app/widgets/item_book_grid.dart';
 // import 'package:easy_search_bar/easy_search_bar.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:hive/hive.dart';
 import 'package:http/http.dart' as http;
 
+import '../models/GBook.dart';
 import '../widgets/item_book_list.dart';
 import '../widgets/no_network.dart';
 
@@ -43,27 +45,22 @@ class DiscoverState extends State<Discover> {
         foregroundColor: Colors.black,
       ),
       body: FutureBuilder<GBookList>(
-        future: fetchBooks(http.Client()),
+        future: fetchBooks(),
         builder: (context, snapshot) {
-          if (query.isEmpty) {
-            return const Center(
-              child: Text('Search something'),
-            );
-          } else if (snapshot.hasError) {
-            var error = snapshot.error.toString();
+
+          if (snapshot.hasError) {
+            var error = snapshot.error?.toString();
 
             if (error != null && error.contains('SocketException')) {
               return noNetworkWidget();
             } else {
               return errorViewWidget(
                   'Something went wrong',
-                  'Please try again later, \nif error persists contact us.',
-                  error);
+                  'Please try again later, \nif error persists contact us.\n',
+                  error?.toString());
             }
 
-          } else if (snapshot.hasData &&
-              snapshot.data?.items != null &&
-              snapshot.data!.items!.isNotEmpty) {
+          } else if (snapshot.hasData && snapshot.data?.items!=null && snapshot.data!.items!.isNotEmpty) {
             return BooksGrid(gBookList: snapshot.data!);
           } else {
             return const Center(
@@ -76,13 +73,13 @@ class DiscoverState extends State<Discover> {
   }
 }
 
-Future<GBookList> fetchBooks(http.Client client) async {
+Future<GBookList> fetchBooks() async {
   print('---fetchBooks()---');
   if (!query.isEmpty) {
     var uri = Uri.parse(getSearchUrl(query));
     print('fetchBooks uri=${uri.toString()}');
 
-    final response = await client.get(uri);
+    final response = await http.Client().get(uri);
 
     print('fetchBooks response=${response.body}');
 
@@ -103,6 +100,16 @@ GBookList parseBooks(String responseBody) {
 
   final parsed_gbookList = GBookList.fromJson(parsed_json);
   print('parsed_gbookList=${parsed_gbookList.toString()}');
+
+  /*var dataBox = Hive.box('favorites');
+  if(parsed_gbookList.items!=null && parsed_gbookList.items!.isNotEmpty) {
+    for (GBook curBook in parsed_gbookList.items!) {
+      var where = dataBox.get(curBook.id);
+      if (where != null) {
+        curBook.isFavorite = 1;
+      }
+    }
+  }*/
 
   return parsed_gbookList;
 }

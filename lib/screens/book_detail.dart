@@ -205,17 +205,24 @@ class BookDetailUI extends StatelessWidget {
                           context: context,
                           transitionDuration: const Duration(milliseconds: 400),
                           pageBuilder: (bc, ania, anis) {
-                            return SizedBox.expand(
-                              child: Center(
-                                child: Image(
-                                  image: NetworkImage(
-                                    gBook.volumeInfo!
-                                        .getThumbnail(small: false),
+                            return Column(
+                              children: [
+                                Container(alignment: Alignment.topRight, padding: EdgeInsets.all(8), child: IconButton(onPressed: (){Navigator.pop(context);}, icon: Icon(Icons.close, color: Colors.white,))),
+                                Center(
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(8),
+                                    child: Image(
+                                      image: NetworkImage(
+                                        gBook.volumeInfo!
+                                            .getThumbnail(small: false),
+                                      ),
+                                      fit: BoxFit.contain,
+                                      width: MediaQuery.of(context).size.width-150,
+                                      height: MediaQuery.of(context).size.height-150,
+                                    ),
                                   ),
-                                  fit: BoxFit.fitWidth,
-                                  width: 300,
                                 ),
-                              ),
+                              ],
                             );
                           });
                     },
