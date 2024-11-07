@@ -8,6 +8,8 @@ import 'package:hive_flutter/hive_flutter.dart';
 import '../screens/book_detail.dart';
 import '../utils/ResponsiveUtils.dart';
 
+bool isDesktop = false;
+
 class BooksGrid extends StatefulWidget {
   const BooksGrid({super.key, required this.gBookList});
 
@@ -19,16 +21,15 @@ class BooksGrid extends StatefulWidget {
 
 class _BooksGridState extends State<BooksGrid> {
   late Box dataBox;
-  // bool isDesktop = false;
 
   @override
   void initState() {
     super.initState();
     dataBox = Hive.box('favorites');
 
-    /*if (ResponsiveUtils.isDesktop(context)) {
+    if (ResponsiveUtils.isDesktop(context)) {
       isDesktop = true;
-    }*/
+    }
   }
 
   @override
@@ -47,10 +48,10 @@ class _BooksGridState extends State<BooksGrid> {
 
           return ItemBooksGrid(gBook: curBook);
         },
-        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisCount: 5,
-          // mainAxisExtent: isDesktop ? 425 : 225,
-          mainAxisExtent: 280,
+        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+          crossAxisCount: isDesktop ? 5 : 3,
+          mainAxisExtent: isDesktop ? 425 : 225,
+          // mainAxisExtent: 280,
           mainAxisSpacing: 0,
           crossAxisSpacing: 8.0,
         ),
@@ -106,8 +107,8 @@ class _ItemBooksGridState extends State<ItemBooksGrid> {
             child: Stack(children: [
               ExtendedImage.network(
                 widget.gBook.volumeInfo!.getThumbnail(small: false),
-                height: 200,
-                // height: isDesktop ? 350 : 150,
+                // height: 200,
+                height: isDesktop ? 200 : 150,
                 //todo: make platform specific, mac/desktop=350, mobile=150
                 width: double.infinity,
                 fit: BoxFit.cover,
