@@ -102,7 +102,8 @@ class _BookDetailV2State extends State<BookDetailV2> {
             ),
           ];
         },
-        body: Column(
+        body: ListView(
+          scrollDirection: Axis.vertical,
           children: [
             const SizedBox(
               height: 8,
@@ -111,7 +112,7 @@ class _BookDetailV2State extends State<BookDetailV2> {
               // getAuthors(gBook.volumeInfo!.authors),
               "Paulo Coelho's",
               overflow: TextOverflow.ellipsis,
-              textAlign: TextAlign.left,
+              textAlign: TextAlign.center,
               style: const TextStyle(
                   fontSize: 12,
                   fontWeight: FontWeight.normal,
@@ -124,6 +125,7 @@ class _BookDetailV2State extends State<BookDetailV2> {
               'The Alchemist',
               maxLines: 3,
               overflow: TextOverflow.ellipsis,
+              textAlign: TextAlign.center,
               style: const TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.bold,
@@ -136,7 +138,7 @@ class _BookDetailV2State extends State<BookDetailV2> {
               // handleNull(gBook.volumeInfo?.publisher),
               'by Simon & Schuster',
               overflow: TextOverflow.ellipsis,
-              textAlign: TextAlign.left,
+              textAlign: TextAlign.center,
               style: const TextStyle(
                   fontSize: 12,
                   fontWeight: FontWeight.normal,
