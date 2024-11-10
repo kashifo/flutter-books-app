@@ -43,6 +43,7 @@ class DiscoverState extends State<Discover> {
         ),
         backgroundColor: Colors.white,
         foregroundColor: Colors.black,
+        automaticallyImplyLeading: false,
       ),
       body: FutureBuilder<GBookList>(
         future: fetchBooks(),
@@ -80,8 +81,7 @@ Future<GBookList> fetchBooks() async {
     print('fetchBooks uri=${uri.toString()}');
 
     final response = await http.Client().get(uri);
-
-    print('fetchBooks response=${response.body}');
+    // print('fetchBooks response=${response.body}');
 
     // Use the compute function to run parsePhotos in a separate isolate.
     return compute(parseBooks, response.body);
@@ -95,11 +95,11 @@ GBookList parseBooks(String responseBody) {
   print('---parseBooks()---');
 
   final parsed_json = jsonDecode(responseBody);
-  print('parsed_json=$parsed_json');
+  // print('parsed_json=$parsed_json');
   print('parsed_json completed');
 
   final parsed_gbookList = GBookList.fromJson(parsed_json);
-  print('parsed_gbookList=${parsed_gbookList.toString()}');
+  // print('parsed_gbookList=${parsed_gbookList.toString()}');
 
   /*var dataBox = Hive.box('favorites');
   if(parsed_gbookList.items!=null && parsed_gbookList.items!.isNotEmpty) {

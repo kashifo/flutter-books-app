@@ -1,16 +1,18 @@
+import 'package:books_app/utils/Enumz.dart';
+import 'package:books_app/utils/shared_prefs_helper.dart';
 import 'package:flutter/material.dart';
 
 import '../main.dart';
 import '../utils/commons.dart';
 
-class Login extends StatefulWidget {
-  const Login({super.key});
+class LoginScreen extends StatefulWidget {
+  const LoginScreen({super.key});
 
   @override
-  State<Login> createState() => _LoginState();
+  State<LoginScreen> createState() => _LoginScreenState();
 }
 
-class _LoginState extends State<Login> {
+class _LoginScreenState extends State<LoginScreen> {
   bool obscureText = true;
   bool isSignupScreen = false;
   final formKey = GlobalKey<FormState>();
@@ -30,10 +32,15 @@ class _LoginState extends State<Login> {
             shrinkWrap: true,
             children: [
 
-              Image.asset(
-                'assets/icons/app_icon_512.png',
-                width: 100,
-                height: 100,
+              GestureDetector(
+                onTap: (){
+                  proceedToLogin();
+                },
+                child: Image.asset(
+                  'assets/icons/app_icon_512.png',
+                  width: 100,
+                  height: 100,
+                ),
               ),
 
               SizedBox(
@@ -151,7 +158,7 @@ class _LoginState extends State<Login> {
                   if(formKey.currentState!.validate()){
 
                     if(emailController.text=="koderkashif@gmail.com" && passwordController.text=="qwerty"){
-                      Navigator.push(context, MaterialPageRoute(builder: (context) => TabView() ))
+                      proceedToLogin()
                     } else {
                       ScaffoldMessenger.of(context).showSnackBar(
                         const SnackBar(content: Text('Invalid credentials'))
@@ -190,4 +197,10 @@ class _LoginState extends State<Login> {
       ),
     );
   }
+
+  proceedToLogin(){
+    SharedPrefsHelper.setBool(Enumz.isLoggedIn.name, true);
+    Navigator.push(context, MaterialPageRoute(builder: (context) => TabView() ));
+  }
+
 }
