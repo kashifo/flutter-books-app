@@ -1,5 +1,6 @@
 import 'package:books_app/models/GBook.dart';
 import 'package:books_app/models/GBookList.dart';
+import 'package:books_app/utils/shared_prefs_helper.dart';
 import 'package:books_app/widgets/item_book_list.dart';
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
@@ -30,6 +31,19 @@ class _FavoritesState extends State<Favorites> {
         ),
         backgroundColor: Colors.white,
         foregroundColor: Colors.black,
+        actions: [
+          InkWell(
+            onTap: () {
+              SharedPrefsHelper().clear();
+              Navigator.pop(context);
+            },
+            child: Padding(
+              padding: const EdgeInsets.only(right: 16),
+              child: Icon(Icons.logout),
+            ),
+          ),
+          SizedBox(width: 8),
+        ],
       ),
       body: ValueListenableBuilder(
         valueListenable: dataBox.listenable(),
