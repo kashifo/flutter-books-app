@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "650133511375",
+    "project_id": "flutterbookz",
+    "storage_bucket": "flutterbookz.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:650133511375:android:b4de31c2d991d1aeb36bba",
+        "android_client_info": {
+          "package_name": "io.github.kashifo.flutter_books_app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBRuePsQeWGVzalLNYHqEPVPXaoi9Lc9TU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

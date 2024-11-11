@@ -1,14 +1,1 @@
-{
-  "hosting": {
-	"site": "flutter-books",
-    "public": "public",
-    "ignore": [
-      "firebase.json",
-      "**/.*",
-      "**/node_modules/**"
-    ],
-    "frameworksBackend": {
-      "region": "asia-east1"
-    }
-  }
-}
+{"hosting":{"site":"flutter-books","public":"public","ignore":["firebase.json","**/.*","**/node_modules/**"],"frameworksBackend":{"region":"asia-east1"}},"flutter":{"platforms":{"android":{"default":{"projectId":"flutterbookz","appId":"1:650133511375:android:b4de31c2d991d1aeb36bba","fileOutput":"android/app/google-services.json"}},"dart":{"lib/firebase_options.dart":{"projectId":"flutterbookz","configurations":{"android":"1:650133511375:android:b4de31c2d991d1aeb36bba","ios":"1:650133511375:ios:7dc40784e26c0841b36bba","macos":"1:650133511375:ios:7dc40784e26c0841b36bba","web":"1:650133511375:web:5df95fded7a94d7bb36bba","windows":"1:650133511375:web:e8f9093601b7e465b36bba"}}}}}}
