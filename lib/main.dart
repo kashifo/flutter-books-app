@@ -9,20 +9,73 @@ import 'package:books_app/screens/favorites.dart';
 import 'package:books_app/models/GBook.dart';
 import 'package:books_app/utils/shared_prefs_helper.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
+import 'package:firedart/firedart.dart';
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:path_provider/path_provider.dart';
+// import 'package:firebase_core/firebase_core.dart';
+import 'firebase_options.dart';
+import 'utils/PreferencesStore.dart';
 
-void main() async {
+const apiKey = 'AIzaSyBRuePsQeWGVzalLNYHqEPVPXaoi9Lc9TU';
+const projectId = 'flutterbookz';
+const email = 'you@server.com';
+const password = '1234';
+
+Future main() async {
   await Hive.initFlutter();
   Hive.registerAdapter(ImageLinksAdapter());
   Hive.registerAdapter(VolumeInfoAdapter());
   Hive.registerAdapter(GBookAdapter());
   await Hive.openBox('favorites');
-
   await SharedPrefsHelper.init();
 
+  initFireDart();
+
   runApp(const MyApp());
+}
+
+initFireDart() async {
+  /*await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );*/
+
+  FirebaseAuth.initialize(apiKey, await PreferencesStore.create());
+  Firestore.initialize(projectId); // Firestore reuses the auth client
+
+  var auth = FirebaseAuth.instance;
+  // Monitor sign-in state
+  auth.signInState.listen((state) => print("Signed ${state ? "in" : "out"}"));
+
+  // Sign in with user credentials
+  await auth.signIn(email, password);
+
+  // Get user object
+  var user = await auth.getUser();
+  print(user);
+
+  // Instantiate a reference to a document - this happens offline
+  var ref = Firestore.instance.collection('test').document('doc');
+
+  // Subscribe to changes to that document
+  final subscription =
+  ref.stream.listen((document) => print('updated: $document'));
+
+  // Update the document
+  await ref.update({'value': 'test'});
+
+  // Get a snapshot of the document
+  var document = await ref.get();
+  print('snapshot: ${document['value']}');
+
+  await subscription.cancel();
+  auth.signOut();
+  auth.close();
+
+  // Allow some time to get the signed out event
+  await Future.delayed(Duration(milliseconds: 100));
+
+  Firestore.instance.close();
 }
 
 class MyApp extends StatelessWidget {
