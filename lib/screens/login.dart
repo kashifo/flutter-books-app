@@ -1,5 +1,6 @@
 import 'package:books_app/utils/Enumz.dart';
 import 'package:books_app/utils/shared_prefs_helper.dart';
+import 'package:firedart/auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 import '../main.dart';
@@ -19,6 +20,7 @@ class _LoginScreenState extends State<LoginScreen> {
   TextEditingController nameController = TextEditingController();
   TextEditingController emailController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
+  var auth = FirebaseAuth.instance;
 
   @override
   Widget build(BuildContext context) {
@@ -32,15 +34,10 @@ class _LoginScreenState extends State<LoginScreen> {
             shrinkWrap: true,
             children: [
 
-              GestureDetector(
-                onTap: (){
-                  proceedToLogin();
-                },
-                child: Image.asset(
-                  'assets/icons/app_icon_512.png',
-                  width: 100,
-                  height: 100,
-                ),
+              Image.asset(
+                'assets/icons/app_icon_512.png',
+                width: 100,
+                height: 100,
               ),
 
               SizedBox(
@@ -156,15 +153,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 textColor: getIntColor('0065ff'),
                 onPressed: () => {
                   if(formKey.currentState!.validate()){
-
-                    if(emailController.text=="koderkashif@gmail.com" && passwordController.text=="qwerty"){
-                      proceedToLogin()
-                    } else {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(content: Text('Invalid credentials'))
-                      )
-                    }
-
+                    proceedToLogin()
                   } else {
                     ScaffoldMessenger.of(context).showSnackBar(
                         const SnackBar(content: Text('Please fill in the details'),)
@@ -198,9 +187,34 @@ class _LoginScreenState extends State<LoginScreen> {
     );
   }
 
-  proceedToLogin(){
-    SharedPrefsHelper.setBool(Enumz.isLoggedIn.name, true);
-    Navigator.push(context, MaterialPageRoute(builder: (context) => TabView() ));
-  }
+  proceedToLogin() async {
+
+    try {
+      if(isSignupScreen){
+        await auth.signUp(emailController.text, passwordController.text);
+        auth.updateProfile(displayName: nameController.text);
+      } else {
+        await auth.signIn(emailController.text, passwordController.text);
+      }
+
+      if(auth.isSignedIn){
+        print('signin suxus');
+        SharedPrefsHelper.setBool(Enumz.isLoggedIn.name, true);
+
+        Navigator.of(context).pushAndRemoveUntil(
+          MaterialPageRoute(builder: (context) => TabView()),
+              (Route<dynamic> route) => false,
+        );
+      }
+
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Error: ${e.toString()}'),
+        ),
+      );
+    }
+
+  }//proceedToLogin
 
 }

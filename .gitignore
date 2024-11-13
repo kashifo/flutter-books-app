@@ -32,6 +32,7 @@ test/
 .pub/
 /build/
 /lib/utils/secrets.dart
+lib/api_keys.json
 
 # Web related
 .firebase/

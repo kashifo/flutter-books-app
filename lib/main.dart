@@ -10,6 +10,7 @@ import 'package:books_app/models/GBook.dart';
 import 'package:books_app/utils/shared_prefs_helper.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:firedart/firedart.dart';
+import 'package:firedart/firestore/token_authenticator.dart';
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:path_provider/path_provider.dart';
@@ -17,10 +18,6 @@ import 'package:path_provider/path_provider.dart';
 import 'firebase_options.dart';
 import 'utils/PreferencesStore.dart';
 
-const apiKey = 'AIzaSyBRuePsQeWGVzalLNYHqEPVPXaoi9Lc9TU';
-const projectId = 'flutterbookz';
-const email = 'you@server.com';
-const password = '1234';
 
 Future main() async {
   await Hive.initFlutter();
@@ -36,46 +33,16 @@ Future main() async {
 }
 
 initFireDart() async {
-  /*await Firebase.initializeApp(
-    options: DefaultFirebaseOptions.currentPlatform,
-  );*/
-
-  FirebaseAuth.initialize(apiKey, await PreferencesStore.create());
-  Firestore.initialize(projectId); // Firestore reuses the auth client
-
+  FirebaseAuth.initialize(const String.fromEnvironment('FIREBASE_KEY'), await PreferencesStore.create());
   var auth = FirebaseAuth.instance;
-  // Monitor sign-in state
-  auth.signInState.listen((state) => print("Signed ${state ? "in" : "out"}"));
 
-  // Sign in with user credentials
-  await auth.signIn(email, password);
+  if(auth.isSignedIn){
+    // Get user object
+    var user = await auth.getUser();
+    print('user=$user');
+  }
 
-  // Get user object
-  var user = await auth.getUser();
-  print(user);
-
-  // Instantiate a reference to a document - this happens offline
-  var ref = Firestore.instance.collection('test').document('doc');
-
-  // Subscribe to changes to that document
-  final subscription =
-  ref.stream.listen((document) => print('updated: $document'));
-
-  // Update the document
-  await ref.update({'value': 'test'});
-
-  // Get a snapshot of the document
-  var document = await ref.get();
-  print('snapshot: ${document['value']}');
-
-  await subscription.cancel();
-  auth.signOut();
-  auth.close();
-
-  // Allow some time to get the signed out event
-  await Future.delayed(Duration(milliseconds: 100));
-
-  Firestore.instance.close();
+  Firestore.initialize(const String.fromEnvironment('FIREBASE_PROJECT_ID'));
 }
 
 class MyApp extends StatelessWidget {
@@ -86,7 +53,7 @@ class MyApp extends StatelessWidget {
     ResponsiveUtils.calcScrWidth(context);
 
     return MaterialApp(
-      home: SharedPrefsHelper.isLoggedIn() ? TabView() : LoginScreen(),
+      home: FirebaseAuth.instance.isSignedIn ? TabView() : LoginScreen(),
       title: 'Flutter BooksApp',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
@@ -108,7 +75,7 @@ class TabView extends StatefulWidget {
 }
 
 class _TabViewState extends State<TabView> {
-  var subscription;
+  // var subscription;
 
   @override
   void initState() {
@@ -146,7 +113,7 @@ class _TabViewState extends State<TabView> {
 
   @override
   void dispose() {
-    subscription.cancel();
+    // subscription.cancel();
     Hive.close();
     super.dispose();
   }
