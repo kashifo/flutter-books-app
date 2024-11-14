@@ -1,7 +1,9 @@
 import 'package:books_app/models/GBook.dart';
 import 'package:books_app/models/GBookList.dart';
+import 'package:books_app/screens/login.dart';
 import 'package:books_app/utils/shared_prefs_helper.dart';
 import 'package:books_app/widgets/item_book_list.dart';
+import 'package:firedart/auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 
@@ -35,7 +37,11 @@ class _FavoritesState extends State<Favorites> {
           InkWell(
             onTap: () {
               SharedPrefsHelper().clear();
-              Navigator.pop(context);
+              FirebaseAuth.instance.signOut();
+              Navigator.of(context).pushAndRemoveUntil(
+                MaterialPageRoute(builder: (context) => LoginScreen()),
+                    (Route<dynamic> route) => false,
+              );
             },
             child: Padding(
               padding: const EdgeInsets.only(right: 16),
