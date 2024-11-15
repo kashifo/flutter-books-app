@@ -5,6 +5,7 @@ import 'package:books_app/widgets/error_view.dart';
 import 'package:books_app/utils/commons.dart';
 import 'package:books_app/models/GBookList.dart';
 import 'package:books_app/widgets/item_book_grid.dart';
+import 'package:firedart/auth/exceptions.dart';
 // import 'package:easy_search_bar/easy_search_bar.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -50,18 +51,30 @@ class DiscoverState extends State<Discover> {
         builder: (context, snapshot) {
 
           if (snapshot.hasError) {
-            var error = snapshot.error?.toString();
 
-            if (error != null && error.contains('SocketException')) {
-              return noNetworkWidget();
+            if (snapshot.error!=null) {
+              var error = snapshot.error.toString();
+
+              if(error.contains('SocketException')){
+                return noNetworkWidget();
+              } else if(error.contains('Quota Exceeded')){
+                return errorViewWidget('API Free Quota Exceeded', 'Please try again tomorrow or get an API Key', '');
+              } else {
+                return errorViewWidget(
+                    'Something went wrong',
+                    'Please try again later, \nif error persists contact us.\n',
+                    error.toString());
+              }
+
             } else {
               return errorViewWidget(
-                  'Something went wrong',
-                  'Please try again later, \nif error persists contact us.\n',
-                  error?.toString());
+                'Something went wrong',
+                'Please try again later, \nif error persists contact us.\n',
+                  '');
             }
 
           } else if (snapshot.hasData && snapshot.data?.items!=null && snapshot.data!.items!.isNotEmpty) {
+            // print('builder snapshot hasData=${snapshot.data}');
             return BooksGrid(gBookList: snapshot.data!);
           } else {
             return const Center(
@@ -83,11 +96,19 @@ Future<GBookList> fetchBooks() async {
     final response = await http.Client().get(uri);
     // print('fetchBooks response=${response.body}');
 
-    // Use the compute function to run parsePhotos in a separate isolate.
-    return compute(parseBooks, response.body);
-  } else {
-    return GBookList();
+    if(response.body.contains('error')){
+      if(response.body.contains('"code": 429')){
+        return Future.error('API Free Quota Exceeded');
+      } else {
+        return Future.error('Something went wrong');
+      }
+    } else {
+      // Use the compute function to run parsePhotos in a separate isolate.
+      return compute(parseBooks, response.body);
+    }
   }
+
+  return GBookList();
 }
 
 // A function that converts a response body into a List<GBookList>.
@@ -98,7 +119,9 @@ GBookList parseBooks(String responseBody) {
   // print('parsed_json=$parsed_json');
   print('parsed_json completed');
 
+
   final parsed_gbookList = GBookList.fromJson(parsed_json);
+  print('parsed_gbookList completed totalItems=${parsed_gbookList.totalItems}, items=${parsed_gbookList.items?.length}');
   // print('parsed_gbookList=${parsed_gbookList.toString()}');
 
   /*var dataBox = Hive.box('favorites');

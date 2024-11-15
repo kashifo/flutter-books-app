@@ -4,6 +4,7 @@ import 'package:books_app/screens/login.dart';
 import 'package:books_app/utils/shared_prefs_helper.dart';
 import 'package:books_app/widgets/item_book_list.dart';
 import 'package:firedart/auth/firebase_auth.dart';
+import 'package:firedart/firedart.dart';
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 
@@ -21,6 +22,24 @@ class _FavoritesState extends State<Favorites> {
   void initState() {
     super.initState();
     dataBox = Hive.box('favorites');
+    fetchFavorites();
+  }
+
+  fetchFavorites() async {
+    var snapshot = await Firestore.instance
+        .collection('users')
+        .document( FirebaseAuth.instance.userId )
+        .collection('favorites')
+        .get();
+
+    print('toList=${snapshot.toList().length}');
+    var list = snapshot.toList();
+
+    for (var favorite in list) {
+      print('Book Name: ${favorite['bookName']}');
+      print('Author: ${favorite['author']}');
+      print('Image URL: ${favorite['imageUrl']}');
+    }
   }
 
   @override
