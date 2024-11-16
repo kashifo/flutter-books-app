@@ -1,9 +1,8 @@
 import 'package:books_app/utils/commons.dart';
 import 'package:books_app/models/GBook.dart';
 import 'package:books_app/models/GBookList.dart';
+import 'package:books_app/utils/firestore_commons.dart';
 import 'package:extended_image/extended_image.dart';
-import 'package:firedart/auth/firebase_auth.dart';
-import 'package:firedart/firestore/firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 
@@ -124,7 +123,7 @@ class _ItemBooksGridState extends State<ItemBooksGrid> {
                       //todo: make platform specific, mac/desktop=350, mobile=150
                       fit: BoxFit.cover,
                       shape: BoxShape.rectangle,
-                      borderRadius: const BorderRadius.all(Radius.circular(10.0)),
+                      borderRadius: const BorderRadius.only( topLeft: Radius.circular(10.0), topRight: Radius.circular(10.0) ),
                     ),
                     InkWell(
                         child: Padding(
@@ -145,11 +144,11 @@ class _ItemBooksGridState extends State<ItemBooksGrid> {
 
                           if (widget.gBook.isFavorite == 1) {
                             dataBox.delete(widget.gBook.id);
-                            updateInFirestore(widget.gBook, true);
+                            updateInFB(widget.gBook, true);
                           } else {
                             widget.gBook.isFavorite = 1;
                             dataBox.put(widget.gBook.id, widget.gBook);
-                            updateInFirestore(widget.gBook, false);
+                            updateInFB(widget.gBook, false);
                           }
 
                           setState(() {
@@ -207,22 +206,6 @@ class _ItemBooksGridState extends State<ItemBooksGrid> {
         ),
       ),
     );
-  }
-}
-
-
-updateInFirestore(GBook gbook, bool delete) async {
-  var userId = FirebaseAuth.instance.userId;
-  var ref = Firestore.instance.collection('users').document( userId ).collection('favorites');
-
-  if(delete) {
-    await ref.document(gbook.id!).delete();
-  } else {
-    await ref.document(gbook.id!).set({
-      'bookName': gbook.volumeInfo!.title,
-      'author': gbook.volumeInfo!.authors.toString(),
-      'imageUrl': gbook.volumeInfo!.getThumbnail(),
-    });
   }
 }
 

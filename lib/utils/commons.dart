@@ -3,21 +3,21 @@ import 'package:flutter/material.dart';
 
 String getSearchUrl(String query){
 
-  //TODO: Comment this if clause if it is not commented, if you've cloned this repo as public or facing error. Or add your own api key for accessing Google Books in the below variable
-  //var API_KEY_GOOGLE_SECRET = '';
-  /*if(API_KEY_GOOGLE_SECRET!=null){
-    return 'https://www.googleapis.com/books/v1/volumes?q=$query&startIndex=0&maxResults=20&key=$API_KEY_GOOGLE_SECRET';
-  }*/
+  //TODO: If you've cloned this repo or if you are facing API quota exceeded. please add your own api key for Google Books in a file name api_keys.json
+  var GOOGLE_BOOKS_API_KEY = const String.fromEnvironment('GOOGLE_BOOKS_API_KEY');
+  if(GOOGLE_BOOKS_API_KEY!=null && GOOGLE_BOOKS_API_KEY.isNotEmpty){
+    return 'https://www.googleapis.com/books/v1/volumes?q=$query&startIndex=0&maxResults=20&key=$GOOGLE_BOOKS_API_KEY';
+  }
 
   return 'https://www.googleapis.com/books/v1/volumes?q=$query&startIndex=0&maxResults=20';
 }
 
 String getBookDetailUrl(String bookId){
-  //TODO: Comment this if clause if it is not commented, if you've cloned this repo as public or facing error. Or add your own api key for accessing Google Books in the below variable
-  //var API_KEY_GOOGLE_SECRET = '';
-  /*if(API_KEY_GOOGLE_SECRET!=null){
-    return 'https://www.googleapis.com/books/v1/volumes/$bookId?key=$API_KEY_GOOGLE_SECRET';
-  }*/
+  //TODO: If you've cloned this repo or if you are facing API quota exceeded. please add your own api key for Google Books in a file name api_keys.json
+  var GOOGLE_BOOKS_API_KEY = const String.fromEnvironment('GOOGLE_BOOKS_API_KEY');
+  if(GOOGLE_BOOKS_API_KEY!=null && GOOGLE_BOOKS_API_KEY.isNotEmpty){
+    return 'https://www.googleapis.com/books/v1/volumes/$bookId?key=$GOOGLE_BOOKS_API_KEY';
+  }
 
   return 'https://www.googleapis.com/books/v1/volumes/$bookId';
 }

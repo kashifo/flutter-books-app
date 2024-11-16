@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:books_app/utils/MyWebView.dart';
 import 'package:books_app/utils/commons.dart';
+import 'package:books_app/utils/firestore_commons.dart';
 import 'package:extended_image/extended_image.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -33,12 +34,21 @@ class _BookDetailState extends State<BookDetail> {
     super.initState();
 
     dataBox = Hive.box('favorites');
-
-    var where = dataBox.get(widget.bookId);
+    /*var where = dataBox.get(widget.bookId);
     print('isFav=$where');
     if(where!=null){
       isLiked = true;
-    }
+    }*/
+
+    checkFavStatusInFB();
+  }
+
+  checkFavStatusInFB() async {
+    isLiked = await checkFavInFB( widget.bookId );
+    print('checkFavStatusInFB()-$isLiked');
+    setState(() {
+      isLiked;
+    });
   }
 
   Map<Box<dynamic>, dynamic Function(dynamic json)> get allBoxes => {
@@ -127,9 +137,11 @@ class _BookDetailState extends State<BookDetail> {
 
                   if (isLiked) {
                     dataBox.delete(widget.bookId);
+                    updateInFB(gBook, true);
                   } else {
                     gBook.isFavorite = 1;
                     dataBox.put(widget.bookId, gBook);
+                    updateInFB(gBook, false);
                   }
 
                   setState(() {
@@ -155,12 +167,23 @@ class _BookDetailState extends State<BookDetail> {
 Future<GBook> fetchBookDetail(String bookId, http.Client client) async {
   print('---fetchBookDetail()---$bookId');
 
-  final response = await client.get(Uri.parse(getBookDetailUrl(bookId)));
+  var uri = Uri.parse(getBookDetailUrl(bookId));
+  print('fetchBookDetail uri=${uri.toString()}');
 
-  print('fetchBookDetail response=${response.body}');
+  final response = await client.get(uri);
+  // print('fetchBookDetail response=${response.body}');
 
-  // Use the compute function to run parseBookDetail in a separate isolate.
-  return compute(parseBookDetail, response.body);
+  if(response.body.contains('error')){
+    if(response.body.contains('"code": 429')){
+      return Future.error('API Free Quota Exceeded');
+    } else {
+      return Future.error('Something went wrong');
+    }
+  } else {
+    // Use the compute function to run parseBookDetail in a separate isolate.
+    return compute(parseBookDetail, response.body);
+  }
+
 }
 
 // A function that converts a response body into a List<GBook>.
@@ -168,10 +191,11 @@ GBook parseBookDetail(String responseBody) {
   print('---parseBookDetail()---');
 
   final parsedJson = jsonDecode(responseBody);
-  print('parsed_json=$parsedJson');
+  // print('parsed_json=$parsedJson');
 
   final parsedGbook = GBook.fromJson(parsedJson);
-  print('parsed_gbook=$parsedGbook');
+  print('---parseBookDetail()---completed');
+  // print('parsed_gbook=$parsedGbook');
 
   return parsedGbook;
 }
