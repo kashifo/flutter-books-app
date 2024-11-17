@@ -2,77 +2,55 @@ name: Android CI
 
 on:
   push:
-    branches: [ "master" ]
+    branches: [ "master", "dev" ]
   pull_request:
-    branches: [ "master" ]
+    branches: [ "master", "dev" ]
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
 
     steps:
-        #1 Checkout Repository
-      - name: Checkout Repository
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-        #2 Setup Java
-      - name: set up JDK 11
+      - name: Set up JDK 17
         uses: actions/setup-java@v4
         with:
-          java-version: '11'
+          java-version: '17'
           distribution: 'temurin'
           cache: gradle
 
-      - name: Grant execute permission for gradlew
-        run: chmod +x gradlew
-      - name: Build with Gradle
-        run: ./gradlew build
-
-        #3 Setup Flutter
       - name: Set Up Flutter
         uses: subosito/flutter-action@v2
         with:
-          flutter-version: '3.22.2'
+          flutter-version: '3.24.5'
           channel: 'stable'
+          cache: flutter
 
-        #4 Install Dependencies
       - name: Install Dependencies
         run: flutter pub get
 
-        #6 Building APK
       - name: Build APK
-        run: flutter build apk --release
+        run: flutter build apk --debug
 
-        #10 Extract Version
-      - name: Extract version from pubspec.yaml
+      - name: Rename APK
+        run: mv build/app/outputs/flutter-apk/app-debug.apk build/app/outputs/flutter-apk/${{ github.repository }}_v${{ env.VERSION }}_build_${{ github.run_number }}_dd-MMM-yyyy.apk
+
+      - name: Upload APK as Artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: ${{ github.repository }}_v${{ env.VERSION }}_build_${{ github.run_number }}_dd-MMM-yyyy.apk
+          path: build/app/outputs/flutter-apk/${{ github.repository }}_v${{ env.VERSION }}_build_${{ github.run_number }}_dd-MMM-yyyy.apk
+
+      - name: Extract Version
         id: extract_version
         run: |
           version=$(grep '^version: ' pubspec.yaml | cut -d ' ' -f 2 | tr -d '\r')
           echo "VERSION=$version" >> $GITHUB_ENV
 
-        #11 Check if Tag Exists
-      - name: Check if Tag Exists
-        id: check_tag
-        run: |
-          if git rev-parse "v${{ env.VERSION }}" >/dev/null 2>&1; then
-            echo "TAG_EXISTS=true" >> $GITHUB_ENV
-          else
-            echo "TAG_EXISTS=false" >> $GITHUB_ENV
-          fi
-
-        #12 Modify Tag if it Exists
-      - name: Modify Tag
-        if: env.TAG_EXISTS == 'true'
-        id: modify_tag
-        run: |
-          new_version="${{ env.VERSION }}-build-${{ github.run_number }}"
-          echo "VERSION=$new_version" >> $GITHUB_ENV
-        
-        #13 Create Release
       - name: Create Release
         uses: ncipollo/release-action@v1
         with:
-          artifacts: "build/app/outputs/flutter-apk/app-release.apk"
-          tag: v${{ env.VERSION }}
-          token: ${{ secrets.TOKEN }}
+          artifacts: "build/app/outputs/flutter-apk/${{ github.repository }}_v${{ env.VERSION }}_build_${{ github.run_number }}_dd-MMM-yyyy.apk"
+          tag: ${{ github.repository_owner }}/${{ github.repository }}-v${{ env.VERSION }}-build-${{ github.run_number }}-dd-MMM-yyyy
+          token: ${{ secrets.BOOKSAPPCI }}

@@ -34,6 +34,7 @@ Future main() async {
 
 initFireDart() async {
   FirebaseAuth.initialize(const String.fromEnvironment('FIREBASE_KEY'), await PreferencesStore.create());
+  Firestore.initialize(const String.fromEnvironment('FIREBASE_PROJECT_ID'));
   var auth = FirebaseAuth.instance;
 
   if(auth.isSignedIn){
@@ -42,7 +43,6 @@ initFireDart() async {
     print('user=$user');
   }
 
-  Firestore.initialize(const String.fromEnvironment('FIREBASE_PROJECT_ID'));
 }
 
 class MyApp extends StatelessWidget {
