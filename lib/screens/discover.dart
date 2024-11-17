@@ -6,6 +6,8 @@ import 'package:books_app/utils/commons.dart';
 import 'package:books_app/models/GBookList.dart';
 import 'package:books_app/widgets/item_book_grid.dart';
 import 'package:firedart/auth/exceptions.dart';
+import 'package:firedart/auth/firebase_auth.dart';
+import 'package:firedart/firestore/firestore.dart';
 // import 'package:easy_search_bar/easy_search_bar.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -34,6 +36,37 @@ class Discover extends StatefulWidget {
 }
 
 class DiscoverState extends State<Discover> {
+  bool isFavLoading = false;
+  List<String> favList = [];
+
+  @override
+  void initState() {
+    super.initState();
+    fetchFavorites();
+  }
+
+  fetchFavorites() async {
+    isFavLoading = true;
+
+    var snapshot = await Firestore.instance
+        .collection('users')
+        .document( FirebaseAuth.instance.userId )
+        .collection('favorites')
+        .get();
+
+    print('fetchFavorites len=${snapshot.toList().length}');
+    var list = snapshot.toList();
+
+    for (var favorite in list) {
+      favList.add( favorite.id );
+    }
+
+    setState(() {
+      isFavLoading = false;
+      favList;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -84,55 +117,56 @@ class DiscoverState extends State<Discover> {
         },
       ),
     );
-  }
-}
+  }//build
 
-Future<GBookList> fetchBooks() async {
-  print('---fetchBooks()---');
-  if (!query.isEmpty) {
-    var uri = Uri.parse(getSearchUrl(query));
-    print('fetchBooks uri=${uri.toString()}');
+  Future<GBookList> fetchBooks() async {
+    print('---fetchBooks()---');
+    if (!query.isEmpty) {
+      var uri = Uri.parse(getSearchUrl(query));
+      print('fetchBooks uri=${uri.toString()}');
 
-    final response = await http.Client().get(uri);
-    // print('fetchBooks response=${response.body}');
+      final response = await http.Client().get(uri);
+      // print('fetchBooks response=${response.body}');
 
-    if(response.body.contains('error')){
-      if(response.body.contains('"code": 429')){
-        return Future.error('API Free Quota Exceeded');
+      if(response.body.contains('error')){
+        if(response.body.contains('"code": 429')){
+          return Future.error('API Free Quota Exceeded');
+        } else {
+          return Future.error('Something went wrong');
+        }
       } else {
-        return Future.error('Something went wrong');
+        /*// Use the compute function to run parsePhotos in a separate isolate.
+        return compute(parseBooks, response.body);*/
+        return await parseBooks(response.body);
       }
-    } else {
-      // Use the compute function to run parsePhotos in a separate isolate.
-      return compute(parseBooks, response.body);
     }
+
+    return Future.error('Something went wrong');
   }
 
-  return GBookList();
-}
+  // A function that converts a response body into a List<GBookList>.
+  Future<GBookList> parseBooks(String responseBody) async {
+    print('---parseBooks()---');
 
-// A function that converts a response body into a List<GBookList>.
-GBookList parseBooks(String responseBody) {
-  print('---parseBooks()---');
+    final parsed_json = jsonDecode(responseBody);
+    print('parsed_json completed');
+    // print('parsed_json=$parsed_json');
 
-  final parsed_json = jsonDecode(responseBody);
-  // print('parsed_json=$parsed_json');
-  print('parsed_json completed');
+    final parsed_gbookList = GBookList.fromJson(parsed_json);
 
+    if(parsed_gbookList.items!=null && parsed_gbookList.items!.isNotEmpty) {
+      print('parsed_gbookList completed totalItems=${parsed_gbookList.totalItems}, items=${parsed_gbookList.items?.length}');
 
-  final parsed_gbookList = GBookList.fromJson(parsed_json);
-  print('parsed_gbookList completed totalItems=${parsed_gbookList.totalItems}, items=${parsed_gbookList.items?.length}');
-  // print('parsed_gbookList=${parsed_gbookList.toString()}');
-
-  /*var dataBox = Hive.box('favorites');
-  if(parsed_gbookList.items!=null && parsed_gbookList.items!.isNotEmpty) {
-    for (GBook curBook in parsed_gbookList.items!) {
-      var where = dataBox.get(curBook.id);
-      if (where != null) {
-        curBook.isFavorite = 1;
+      for (var gbook in parsed_gbookList.items!) {
+        if(favList.contains( gbook.id )){
+          gbook.isFavorite = 1;
+        }
       }
-    }
-  }*/
 
-  return parsed_gbookList;
-}
+      return parsed_gbookList;
+    }
+
+    return Future.error('Something went wrong');
+  }
+
+}//State

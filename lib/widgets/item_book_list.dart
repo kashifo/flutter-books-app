@@ -1,6 +1,7 @@
 import 'package:books_app/utils/commons.dart';
 import 'package:books_app/models/GBook.dart';
 import 'package:books_app/models/GBookList.dart';
+import 'package:books_app/utils/firestore_commons.dart';
 import 'package:extended_image/extended_image.dart';
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
@@ -118,7 +119,7 @@ class _ItemBookListState extends State<ItemBookList> {
                     height: 4,
                   ),
                   Text(
-                    getAuthors(widget.gBook.volumeInfo!.authors),
+                    widget.gBook.volumeInfo!.getAuthors(),
                     overflow: TextOverflow.ellipsis,
                     textAlign: TextAlign.left,
                     style: const TextStyle(
@@ -151,20 +152,25 @@ class _ItemBookListState extends State<ItemBookList> {
 
                 print('fav pressed: ${widget.gBook.isFavorite}');
 
-                setState(() {
-
                   if (widget.gBook.isFavorite == 1) {
-                    widget.gBook.isFavorite = 0;
                     dataBox.delete(widget.gBook.id);
+                    updateInFB(widget.gBook, true);
                   } else {
-                    widget.gBook.isFavorite = 1;
                     dataBox.put(widget.gBook.id, widget.gBook);
+                    updateInFB(widget.gBook, false);
                   }
 
-                });
+                  setState(() {
+                    if (widget.gBook.isFavorite == 1) {
+                      widget.gBook.isFavorite = 0;
+                    } else {
+                      widget.gBook.isFavorite = 1;
+                    }
+                  });
+
 
                 ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                  content: Text(widget.gBook.isFavorite == 1
+                  content: Text(widget.gBook.isFavorite==1
                       ? 'Added to your favorites'
                       : 'Removed from your favorites'),
                   duration: const Duration(seconds: 1),

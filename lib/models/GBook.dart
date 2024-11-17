@@ -14,7 +14,7 @@ class GBook extends HiveObject {
   GBook({required this.id, required this.volumeInfo, required this.isFavorite});
 
   GBook.fromJson(Map<String, dynamic> json) {
-    print('GBook fromJson');
+    // print('GBook fromJson');
 
     id = json['id'];
     isFavorite = 0;
@@ -47,6 +47,7 @@ class VolumeInfo {
 
   @HiveField(1)
   List<String>? authors;
+  String? authorStr;
 
   @HiveField(2)
   String? publisher;
@@ -65,11 +66,34 @@ class VolumeInfo {
   String? infoLink;
 
   String getThumbnail({bool small = true}) {
-    if (imageLinks!=null && imageLinks!.smallThumbnail != null) {
-      return imageLinks!.smallThumbnail!;
+    if (imageLinks!=null) {
+      if(imageLinks!.thumbnail!=null && imageLinks!.thumbnail!=null){
+        return imageLinks!.thumbnail!;
+      } else if(imageLinks!.smallThumbnail!=null && imageLinks!.smallThumbnail!=null){
+        return imageLinks!.smallThumbnail!;
+      } else {
+        return '';
+      }
     } else {
       return '';
     }
+  }
+
+  String getAuthors() {
+    if (authorStr != null && authorStr!.isNotEmpty) {
+      return authorStr!;
+    }
+
+    if (authors == null || authors!.isEmpty) {
+      authorStr = 'Author N/A';
+    } else {
+      authorStr = authors!.toString();
+      var replace1 = authorStr!.replaceAll('[', '');
+      var replace2 = replace1.replaceAll(']', '');
+      authorStr = 'by $replace2';
+    }
+
+    return authorStr!;
   }
 
   @override
@@ -91,12 +115,19 @@ class VolumeInfo {
       this.previewLink,
       this.infoLink});
 
+  VolumeInfo.lite(
+      {this.title,
+        this.authorStr,
+        this.publisher,
+        this.imageLinks,
+      });
+
   VolumeInfo.fromJson(Map<String, dynamic> json) {
-    print('GBook VolumeInfo fromJson');
+    // print('GBook VolumeInfo fromJson');
 
     try {
       title = json['title'] as String?;
-      print('parsed_json title=$title');
+      // print('parsed_json title=$title');
 
       if (json['authors'] != null) {
             authors = json['authors'].cast<String>();
@@ -178,6 +209,8 @@ class ImageLinks {
   String? thumbnail;
 
   ImageLinks({this.smallThumbnail, this.thumbnail});
+
+  ImageLinks.lite({this.thumbnail});
 
   ImageLinks.fromJson(Map<String, dynamic> json) {
     smallThumbnail = json['smallThumbnail'] as String?;

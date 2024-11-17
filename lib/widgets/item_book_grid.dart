@@ -67,18 +67,6 @@ class ItemBooksGrid extends StatefulWidget {
 }
 
 class _ItemBooksGridState extends State<ItemBooksGrid> {
-  bool isLiked = false;
-
-  @override
-  void initState() {
-    super.initState();
-
-    if (widget.gBook.isFavorite == 1) {
-      isLiked = true;
-    } else {
-      isLiked = false;
-    }
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -135,7 +123,7 @@ class _ItemBooksGridState extends State<ItemBooksGrid> {
                                 Shadow(color: Colors.blue, blurRadius: 1.0)
                               ],
                               color: Colors.blue,
-                              isLiked ? Icons.favorite : Icons.favorite_border),
+                              widget.gBook.isFavorite==1 ? Icons.favorite : Icons.favorite_border),
                         ),
                         onTap: () {
                           Box dataBox = Hive.box('favorites');
@@ -146,17 +134,20 @@ class _ItemBooksGridState extends State<ItemBooksGrid> {
                             dataBox.delete(widget.gBook.id);
                             updateInFB(widget.gBook, true);
                           } else {
-                            widget.gBook.isFavorite = 1;
                             dataBox.put(widget.gBook.id, widget.gBook);
                             updateInFB(widget.gBook, false);
                           }
 
                           setState(() {
-                            isLiked = !isLiked;
+                            if (widget.gBook.isFavorite == 1) {
+                              widget.gBook.isFavorite = 0;
+                            } else {
+                              widget.gBook.isFavorite = 1;
+                            }
                           });
 
                           ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                            content: Text(isLiked
+                            content: Text(widget.gBook.isFavorite==1
                                 ? 'Added to your favorites'
                                 : 'Removed from your favorites'),
                             duration: const Duration(seconds: 1),
@@ -189,7 +180,7 @@ class _ItemBooksGridState extends State<ItemBooksGrid> {
                     Padding(
                       padding: const EdgeInsets.only(left: 4.0, top: 2.0, right: 4.0),
                       child: Text(
-                        getAuthors(widget.gBook.volumeInfo!.authors),
+                        widget.gBook.volumeInfo!.getAuthors(),
                         overflow: TextOverflow.ellipsis,
                         textAlign: TextAlign.left,
                         style: const TextStyle(

@@ -14,7 +14,6 @@ updateInFB(GBook gbook, bool delete) async {
       'imageUrl': gbook.volumeInfo!.getThumbnail(),
       'authors': gbook.volumeInfo!.authors.toString(),
       'publisher': gbook.volumeInfo!.publisher,
-      'description': gbook.volumeInfo!.description,
     });
   }
 }

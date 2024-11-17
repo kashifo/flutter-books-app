@@ -274,7 +274,7 @@ class BookDetailUI extends StatelessWidget {
                           height: 4,
                         ),
                         Text(
-                          getAuthors(gBook.volumeInfo!.authors),
+                          gBook.volumeInfo!.getAuthors(),
                           overflow: TextOverflow.ellipsis,
                           textAlign: TextAlign.left,
                           style: const TextStyle(

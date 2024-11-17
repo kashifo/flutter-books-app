@@ -2,6 +2,8 @@ import 'dart:convert';
 
 import 'package:books_app/utils/commons.dart';
 import 'package:books_app/models/GBookList.dart';
+import 'package:firedart/auth/firebase_auth.dart';
+import 'package:firedart/firestore/firestore.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
@@ -21,11 +23,36 @@ class Search extends StatefulWidget {
 
 class SearchState extends State<Search> {
   late http.Client httpClient;
+  bool isFavLoading = false, isLoading = false;
+  List<String> favList = [];
 
   @override
   void initState() {
-    httpClient = http.Client();
     super.initState();
+    httpClient = http.Client();
+    fetchFavorites();
+  }
+
+  fetchFavorites() async {
+    isFavLoading = true;
+
+    var snapshot = await Firestore.instance
+        .collection('users')
+        .document( FirebaseAuth.instance.userId )
+        .collection('favorites')
+        .get();
+
+    print('fetchFavorites len=${snapshot.toList().length}');
+    var list = snapshot.toList();
+
+    for (var favorite in list) {
+      favList.add( favorite.id );
+    }
+
+    setState(() {
+      isFavLoading = false;
+      favList;
+    });
   }
 
   @override
@@ -78,55 +105,85 @@ class SearchState extends State<Search> {
             child: FutureBuilder<GBookList>(
               future: searchBooks(httpClient),
               builder: (context, snapshot) {
-                if (query.isEmpty) {
+
+                if(isLoading){
                   return const Center(
-                    child: Text(''),
+                    child: CircularProgressIndicator(),
+                  );
+                } else if (query.isEmpty) {
+                  return const Center(
+                    child: Text('Type something to search'),
                   );
                 } else if (snapshot.hasError) {
                   return Center(
                     child: Text('An error has occurred! \n\n ${snapshot.error}'),
                   );
-                } else if (snapshot.hasData &&
-                    snapshot.data?.items != null &&
-                    snapshot.data!.items!.isNotEmpty) {
-                  return BooksList(gBookList: snapshot.data!);
+                } else if (snapshot.hasData) {
+
+                  if(snapshot.data?.items!=null && snapshot.data!.items!.isNotEmpty) {
+                    return BooksList(gBookList: snapshot.data!);
+                  } else {
+                    return const Center(
+                      child: Text('No items found'),
+                    );
+                  }
+
                 } else {
                   return const Center(
                     child: CircularProgressIndicator(),
                   );
                 }
+
               },
             ),
           ),
         ],
       ),
     );
-  }
-}
+  }//build
 
-Future<GBookList> searchBooks(http.Client client) async {
-  print('---searchBooks()---$query');
-  if (!query.isEmpty) {
-    final response = await client.get(Uri.parse(getSearchUrl(query)));
 
-    //print('searchBooks response=${response.body}');
+  Future<GBookList> searchBooks(http.Client client) async {
+    print('---searchBooks()---$query');
 
-    // Use the compute function to run parser in a separate isolate.
-    return compute(parseBooks, response.body);
-  } else {
+    if (!query.isEmpty) {
+      isLoading = true;
+      final response = await client.get(Uri.parse(getSearchUrl(query)));
+      //print('searchBooks response=${response.body}');
+
+      // Use the compute function to run parser in a separate isolate.
+      // return compute(parseBooks, response.body);
+      isLoading = false;
+      return await parseBooks(response.body);
+    }
+
+    isLoading = false;
     return GBookList();
   }
-}
 
-// A function that converts a response body into a List<GBookList>.
-GBookList parseBooks(String responseBody) {
-  print('---parseBooks()---');
+  // A function that converts a response body into a List<GBookList>.
+  Future<GBookList> parseBooks(String responseBody) async {
+    print('---parseBooks()---');
 
-  final parsed_json = jsonDecode(responseBody);
-  //print('parsed_json=$parsed_json');
+    final parsed_json = jsonDecode(responseBody);
+    //print('parsed_json=$parsed_json');
 
-  final parsed_gbookList = GBookList.fromJson(parsed_json);
-  //print('parsed_gbookList=${parsed_gbookList.toString()}');
+    GBookList parsed_gbookList = GBookList.fromJson(parsed_json);
 
-  return parsed_gbookList;
-}
+    if(parsed_gbookList.items!=null && parsed_gbookList.items!.isNotEmpty) {
+      print('parsed_gbookList items len=${parsed_gbookList.items!.length}');
+
+      for (var gbook in parsed_gbookList.items!) {
+        if(favList.contains( gbook.id )){
+          gbook.isFavorite = 1;
+        }
+      }
+
+      return parsed_gbookList;
+    }
+
+    return Future.error('Something went wrong');
+  }
+
+
+}//SearchState

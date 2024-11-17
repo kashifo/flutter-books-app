@@ -1,12 +1,9 @@
 import 'package:books_app/models/GBook.dart';
-import 'package:books_app/models/GBookList.dart';
 import 'package:books_app/screens/login.dart';
 import 'package:books_app/utils/shared_prefs_helper.dart';
 import 'package:books_app/widgets/item_book_list.dart';
-import 'package:firedart/auth/firebase_auth.dart';
 import 'package:firedart/firedart.dart';
 import 'package:flutter/material.dart';
-import 'package:hive_flutter/hive_flutter.dart';
 
 class Favorites extends StatefulWidget {
   const Favorites({super.key});
@@ -16,16 +13,20 @@ class Favorites extends StatefulWidget {
 }
 
 class _FavoritesState extends State<Favorites> {
-  late final Box dataBox;
+  // late final Box dataBox;
+  List<GBook> gbookList = [];
+  bool isLoading = false;
 
   @override
   void initState() {
     super.initState();
-    dataBox = Hive.box('favorites');
+    // dataBox = Hive.box('favorites');
     fetchFavorites();
   }
 
   fetchFavorites() async {
+    isLoading = true;
+
     var snapshot = await Firestore.instance
         .collection('users')
         .document( FirebaseAuth.instance.userId )
@@ -36,10 +37,23 @@ class _FavoritesState extends State<Favorites> {
     var list = snapshot.toList();
 
     for (var favorite in list) {
-      print('Book Name: ${favorite['bookName']}');
-      print('Author: ${favorite['author']}');
-      print('Image URL: ${favorite['imageUrl']}');
+      VolumeInfo  vi = VolumeInfo.lite(
+        title: favorite['bookName'],
+        authorStr: favorite['authors'],
+        publisher: favorite['publisher'],
+        imageLinks: ImageLinks(
+            smallThumbnail: favorite['imageUrl'],
+            thumbnail: favorite['imageUrl']
+        ),
+      );
+      GBook gBook = GBook(id: favorite.id, volumeInfo: vi, isFavorite: 1);
+      gbookList.add(gBook);
     }
+
+    setState(() {
+      isLoading = false;
+      gbookList;
+    });
   }
 
   @override
@@ -70,31 +84,60 @@ class _FavoritesState extends State<Favorites> {
           SizedBox(width: 8),
         ],
       ),
-      body: ValueListenableBuilder(
-        valueListenable: dataBox.listenable(),
-        builder: (context, data, child) {
-          if (data.isEmpty) {
-            return const Center(
-              child: Text("You haven't liked any books yet"),
-            );
-          } else {
-            print("saved books size: ${dataBox.length}");
-
-            return ListView.builder(
-              itemCount: dataBox.length,
-              itemBuilder: (context, index) {
-                var key = data.keyAt(index);
-
-                GBook curBook = data.get(key);
-                //curBook.isFavorite = 1;
-                print("itemBook: $curBook");
-
-                return ItemBookList(gBook: curBook);
-              },
-            );
-          }
-        },
-      ),
+      body: showFavoritesfromFB(),
     );
   }
+
+  Widget showFavoritesfromFB(){
+    if(isLoading){
+      return const Center(
+        child: CircularProgressIndicator(),
+      );
+    }
+
+    if (gbookList.isEmpty) {
+      return const Center(
+        child: Text("You haven't liked any books yet"),
+      );
+    } else {
+      print("saved books size: ${gbookList.length}");
+
+      return ListView.builder(
+        itemCount: gbookList.length,
+        itemBuilder: (context, index) {
+          GBook curBook = gbookList[index];
+          return ItemBookList(gBook: curBook);
+        },
+      );
+    }
+  }
+
+  /*Widget showFavoritesFromHive(){
+    return ValueListenableBuilder(
+      // valueListenable: dataBox.listenable(),
+      builder: (context, data, child) {
+        if (data.isEmpty) {
+          return const Center(
+            child: Text("You haven't liked any books yet"),
+          );
+        } else {
+          print("saved books size: ${dataBox.length}");
+
+          return ListView.builder(
+            itemCount: dataBox.length,
+            itemBuilder: (context, index) {
+              var key = data.keyAt(index);
+
+              GBook curBook = data.get(key);
+              //curBook.isFavorite = 1;
+              print("itemBook: $curBook");
+
+              return ItemBookList(gBook: curBook);
+            },
+          );
+        }
+      },
+    );
+  }*/
+
 }
