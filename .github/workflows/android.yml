@@ -33,20 +33,11 @@ jobs:
       - name: Build APK
         run: flutter build apk --dart-define=FIREBASE_KEY=${{ secrets.FIREBASE_KEY }} --dart-define=FIREBASE_PROJECT_ID=${{ secrets.FIREBASE_PROJECT_ID }} --dart-define=GOOGLE_BOOKS_API_KEY=${{ secrets.GOOGLE_BOOKS_API_KEY }}
 
-      - name: Build Linux Binary
-        run: flutter build linux --release
-
       - name: Upload APK as artifact
         uses: actions/upload-artifact@v3
         with:
           name: android-app.apk
           path: build/app/outputs/flutter-apk/app-release.apk
-
-      - name: Upload Linux binary as artifact
-        uses: actions/upload-artifact@v3
-        with:
-          name: linux-release
-          path: build/linux/x64/release/bundle/
 
       - name: Extract Version
         id: extract_version
@@ -57,6 +48,6 @@ jobs:
       - name: Create Release
         uses: ncipollo/release-action@v1
         with:
-          artifacts: "build/app/outputs/flutter-apk/app-release.apk", "build/linux/x64/release/bundle/"
+          artifacts: "build/app/outputs/flutter-apk/app-release.apk"
           tag: v${{ env.VERSION }}-build-${{ github.run_number }}
           token: ${{ secrets.BOOKSAPPCI }}
