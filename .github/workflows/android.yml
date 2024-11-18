@@ -31,26 +31,23 @@ jobs:
         run: flutter pub get
 
       - name: Build APK
-        run: flutter build apk --debug
-
-      - name: Rename APK
-        run: mv build/app/outputs/flutter-apk/app-debug.apk build/app/outputs/flutter-apk/${{ github.repository }}_v${{ env.VERSION }}_build_${{ github.run_number }}_dd-MMM-yyyy.apk
+        run: flutter build apk --debug --dart-define=FIREBASE_KEY=${{ secrets.FIREBASE_KEY }} --dart-define=FIREBASE_PROJECT_ID=${{ secrets.FIREBASE_PROJECT_ID }} --dart-define=GOOGLE_BOOKS_API_KEY=${{ secrets.GOOGLE_BOOKS_API_KEY }}
 
       - name: Upload APK as Artifact
         uses: actions/upload-artifact@v3
         with:
-          name: ${{ github.repository }}_v${{ env.VERSION }}_build_${{ github.run_number }}_dd-MMM-yyyy.apk
-          path: build/app/outputs/flutter-apk/${{ github.repository }}_v${{ env.VERSION }}_build_${{ github.run_number }}_dd-MMM-yyyy.apk
+          name: app-debug.apk
+          path: build/app/outputs/flutter-apk/app-debug.apk
 
       - name: Extract Version
         id: extract_version
         run: |
-          version=$(grep '^version: ' pubspec.yaml | cut -d ' ' -f 2 | tr -d '\r')
+          version=$(grep '^version:' pubspec.yaml | awk '{print $2}' | tr -d '\r')
           echo "VERSION=$version" >> $GITHUB_ENV
 
       - name: Create Release
         uses: ncipollo/release-action@v1
         with:
-          artifacts: "build/app/outputs/flutter-apk/${{ github.repository }}_v${{ env.VERSION }}_build_${{ github.run_number }}_dd-MMM-yyyy.apk"
-          tag: ${{ github.repository_owner }}/${{ github.repository }}-v${{ env.VERSION }}-build-${{ github.run_number }}-dd-MMM-yyyy
+          artifacts: "build/app/outputs/flutter-apk/app-debug.apk"
+          tag: v${{ env.VERSION }}-build-${{ github.run_number }}
           token: ${{ secrets.BOOKSAPPCI }}
