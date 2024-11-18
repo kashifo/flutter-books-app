@@ -33,10 +33,10 @@ jobs:
       - name: Build APK
         run: flutter build apk --dart-define=FIREBASE_KEY=${{ secrets.FIREBASE_KEY }} --dart-define=FIREBASE_PROJECT_ID=${{ secrets.FIREBASE_PROJECT_ID }} --dart-define=GOOGLE_BOOKS_API_KEY=${{ secrets.GOOGLE_BOOKS_API_KEY }}
 
-      - name: Upload APK as artifact
+      - name: Upload APK as Artifact
         uses: actions/upload-artifact@v3
         with:
-          name: android-app.apk
+          name: app-release.apk
           path: build/app/outputs/flutter-apk/app-release.apk
 
       - name: Extract Version
