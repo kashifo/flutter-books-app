@@ -1,5 +1,4 @@
 import 'dart:convert';
-
 import 'package:books_app/utils/MyWebView.dart';
 import 'package:books_app/utils/commons.dart';
 import 'package:books_app/utils/firestore_commons.dart';
@@ -7,12 +6,7 @@ import 'package:extended_image/extended_image.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
-import 'package:hive_flutter/hive_flutter.dart';
-import 'package:hive_ui/hive_ui.dart';
-import 'package:hive_ui/boxes_view.dart';
-
 import 'package:http/http.dart' as http;
-
 import '../models/GBook.dart';
 
 class BookDetail extends StatefulWidget {
@@ -26,20 +20,11 @@ class BookDetail extends StatefulWidget {
 
 class _BookDetailState extends State<BookDetail> {
   late GBook gBook;
-  late Box dataBox;
   bool isLiked = false;
 
   @override
   void initState() {
     super.initState();
-
-    dataBox = Hive.box('favorites');
-    /*var where = dataBox.get(widget.bookId);
-    print('isFav=$where');
-    if(where!=null){
-      isLiked = true;
-    }*/
-
     checkFavStatusInFB();
   }
 
@@ -50,10 +35,6 @@ class _BookDetailState extends State<BookDetail> {
       isLiked;
     });
   }
-
-  Map<Box<dynamic>, dynamic Function(dynamic json)> get allBoxes => {
-    dataBox: (json) => GBook.fromJson(json),
-  };
 
   @override
   Widget build(BuildContext context) {
@@ -136,11 +117,9 @@ class _BookDetailState extends State<BookDetail> {
                   print('fav pressed: ${gBook.toString()}');
 
                   if (isLiked) {
-                    dataBox.delete(widget.bookId);
                     updateInFB(gBook, true);
                   } else {
                     gBook.isFavorite = 1;
-                    dataBox.put(widget.bookId, gBook);
                     updateInFB(gBook, false);
                   }
 

@@ -1,8 +1,5 @@
 import 'package:books_app/models/GBook.dart';
 import 'package:flutter/material.dart';
-import 'package:hive_flutter/hive_flutter.dart';
-
-import '../utils/ResponsiveUtils.dart';
 import '../utils/commons.dart';
 
 class BookDetailV2 extends StatefulWidget {
@@ -16,7 +13,6 @@ class BookDetailV2 extends StatefulWidget {
 
 class _BookDetailV2State extends State<BookDetailV2> {
   late GBook gBook;
-  late Box dataBox;
   bool isLiked = false;
 
   @override

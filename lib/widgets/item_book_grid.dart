@@ -1,11 +1,8 @@
-import 'package:books_app/utils/commons.dart';
 import 'package:books_app/models/GBook.dart';
 import 'package:books_app/models/GBookList.dart';
 import 'package:books_app/utils/firestore_commons.dart';
 import 'package:extended_image/extended_image.dart';
 import 'package:flutter/material.dart';
-import 'package:hive_flutter/hive_flutter.dart';
-
 import '../screens/book_detail.dart';
 import '../utils/ResponsiveUtils.dart';
 
@@ -19,13 +16,6 @@ class BooksGrid extends StatefulWidget {
 }
 
 class _BooksGridState extends State<BooksGrid> {
-  late Box dataBox;
-
-  @override
-  void initState() {
-    super.initState();
-    dataBox = Hive.box('favorites');
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -35,12 +25,6 @@ class _BooksGridState extends State<BooksGrid> {
         itemCount: widget.gBookList.items?.length,
         itemBuilder: (context, index) {
           GBook curBook = widget.gBookList.items![index];
-
-          var where = dataBox.get(curBook.id);
-          if (where != null) {
-            curBook.isFavorite = 1;
-          }
-
           return ItemBooksGrid(gBook: curBook);
         },
         gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
@@ -126,15 +110,12 @@ class _ItemBooksGridState extends State<ItemBooksGrid> {
                               widget.gBook.isFavorite==1 ? Icons.favorite : Icons.favorite_border),
                         ),
                         onTap: () {
-                          Box dataBox = Hive.box('favorites');
 
                           print('fav pressed: ${widget.gBook.isFavorite}');
 
                           if (widget.gBook.isFavorite == 1) {
-                            dataBox.delete(widget.gBook.id);
                             updateInFB(widget.gBook, true);
                           } else {
-                            dataBox.put(widget.gBook.id, widget.gBook);
                             updateInFB(widget.gBook, false);
                           }
 

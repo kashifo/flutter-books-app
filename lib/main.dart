@@ -1,34 +1,19 @@
-import 'package:books_app/screens/book_detail_v2.dart';
 import 'package:books_app/screens/login.dart';
 import 'package:books_app/screens/search.dart';
-import 'package:books_app/utils/Enumz.dart';
 import 'package:books_app/utils/ResponsiveUtils.dart';
 import 'package:books_app/utils/commons.dart';
 import 'package:books_app/screens/discover.dart';
 import 'package:books_app/screens/favorites.dart';
-import 'package:books_app/models/GBook.dart';
 import 'package:books_app/utils/shared_prefs_helper.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:firedart/firedart.dart';
-import 'package:firedart/firestore/token_authenticator.dart';
 import 'package:flutter/material.dart';
-import 'package:hive_flutter/hive_flutter.dart';
-import 'package:path_provider/path_provider.dart';
-// import 'package:firebase_core/firebase_core.dart';
-import 'firebase_options.dart';
 import 'utils/PreferencesStore.dart';
 
 
 Future main() async {
-  await Hive.initFlutter();
-  Hive.registerAdapter(ImageLinksAdapter());
-  Hive.registerAdapter(VolumeInfoAdapter());
-  Hive.registerAdapter(GBookAdapter());
-  await Hive.openBox('favorites');
   await SharedPrefsHelper.init();
-
   initFireDart();
-
   runApp(const MyApp());
 }
 
@@ -114,7 +99,6 @@ class _TabViewState extends State<TabView> {
   @override
   void dispose() {
     // subscription.cancel();
-    Hive.close();
     super.dispose();
   }
 

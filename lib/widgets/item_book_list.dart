@@ -4,8 +4,6 @@ import 'package:books_app/models/GBookList.dart';
 import 'package:books_app/utils/firestore_commons.dart';
 import 'package:extended_image/extended_image.dart';
 import 'package:flutter/material.dart';
-import 'package:hive_flutter/hive_flutter.dart';
-
 import '../screens/book_detail.dart';
 
 class BooksList extends StatefulWidget {
@@ -18,27 +16,13 @@ class BooksList extends StatefulWidget {
 }
 
 class _BooksListState extends State<BooksList> {
-  late Box dataBox;
-
-  @override
-  void initState() {
-    super.initState();
-    dataBox = Hive.box('favorites');
-  }
 
   @override
   Widget build(BuildContext context) {
     return ListView.builder(
       itemCount: widget.gBookList.items?.length,
       itemBuilder: (context, index) {
-
         GBook curBook = widget.gBookList.items![index];
-
-        var where = dataBox.get(curBook.id);
-        if(where!=null){
-          curBook.isFavorite = 1;
-        }
-
         return ItemBookList(gBook: curBook);
       },
     );
@@ -148,15 +132,12 @@ class _ItemBookListState extends State<ItemBookList> {
                   color: Colors.blue,
                   widget.gBook.isFavorite==1 ? Icons.favorite : Icons.favorite_border),
               onPressed: () {
-                Box dataBox = Hive.box('favorites');
 
                 print('fav pressed: ${widget.gBook.isFavorite}');
 
                   if (widget.gBook.isFavorite == 1) {
-                    dataBox.delete(widget.gBook.id);
                     updateInFB(widget.gBook, true);
                   } else {
-                    dataBox.put(widget.gBook.id, widget.gBook);
                     updateInFB(widget.gBook, false);
                   }
 

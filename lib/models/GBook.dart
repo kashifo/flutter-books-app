@@ -1,14 +1,6 @@
-import 'package:hive/hive.dart';
-
-part "GBook.g.dart";
-
-@HiveType(typeId: 0)
-class GBook extends HiveObject {
-  @HiveField(0)
+class GBook {
   String? id;
-  @HiveField(1)
   VolumeInfo? volumeInfo;
-  @HiveField(2)
   int isFavorite = 0;
 
   GBook({required this.id, required this.volumeInfo, required this.isFavorite});
@@ -39,20 +31,15 @@ class GBook extends HiveObject {
   }
 }
 
-@HiveType(typeId: 1)
 class VolumeInfo {
 
-  @HiveField(0)
   String? title;
 
-  @HiveField(1)
   List<String>? authors;
   String? authorStr;
 
-  @HiveField(2)
   String? publisher;
 
-  @HiveField(3)
   ImageLinks? imageLinks;
 
   int? pageCount;
@@ -201,11 +188,8 @@ class IndustryIdentifiers {
   }
 }
 
-@HiveType(typeId: 2)
 class ImageLinks {
-  @HiveField(0)
   String? smallThumbnail;
-  @HiveField(1)
   String? thumbnail;
 
   ImageLinks({this.smallThumbnail, this.thumbnail});
