@@ -3,37 +3,43 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 class SharedPrefsHelper{
 
-  static late SharedPreferences sprefs;
+  static final SharedPrefsHelper _instance = SharedPrefsHelper._internal();
+  factory SharedPrefsHelper() {
+    return _instance;
+  }
+  SharedPrefsHelper._internal();
 
-  static init() async{
+  late SharedPreferences sprefs;
+
+  Future<void> init() async{
     sprefs = await SharedPreferences.getInstance();
   }
 
-  static bool isLoggedIn(){
+  bool isLoggedIn(){
     return sprefs.getBool(Enumz.isLoggedIn.name) ?? false;
   }
 
-  static String? getString(String key){
+  String? getString(String key){
     return sprefs.getString(key);
   }
 
-  static setString(String key, String value){
+  setString(String key, String value){
     sprefs.setString(key, value);
   }
 
-  static int? getInt(String key){
+  int? getInt(String key){
     return sprefs.getInt(key);
   }
 
-  static setInt(String key, int value){
+  setInt(String key, int value){
     sprefs.setInt(key, value);
   }
 
-  static bool? getBool(String key){
+  bool? getBool(String key){
     return sprefs.getBool(key);
   }
 
-  static setBool(String key, bool value){
+  setBool(String key, bool value){
     sprefs.setBool(key, value);
   }
 

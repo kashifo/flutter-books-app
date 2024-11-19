@@ -39,15 +39,34 @@ jobs:
           name: app-release.apk
           path: build/app/outputs/flutter-apk/app-release.apk
 
+      - name: Build Linux Binary
+        run: flutter build linux --release
+
+      - name: Archive Release
+        uses: thedoctor0/zip-release@0.7.5
+        with:
+          type: 'zip'
+          filename: 'linux-release.zip'
+          path: build/linux/x64/release/bundle/
+
+      - name: Upload Linux binary as artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: linux-release
+          path: build/linux/x64/release/bundle/linux-release.zip
+
       - name: Extract Version
         id: extract_version
         run: |
-          version=$(grep '^version:' pubspec.yaml | awk '{print $2}' | tr -d '\r')
+          version=$(grep -E '^version:' pubspec.yaml | sed 's/version: //')
           echo "VERSION=$version" >> $GITHUB_ENV
 
       - name: Create Release
-        uses: ncipollo/release-action@v1
+        uses: softprops/action-gh-release@v2
         with:
-          artifacts: "build/app/outputs/flutter-apk/app-release.apk"
-          tag: v${{ env.VERSION }}-build-${{ github.run_number }}
+          name: "Release v${{ env.VERSION }}-build-${{ github.run_number }}"
           token: ${{ secrets.BOOKSAPPCI }}
+          tag: v${{ env.VERSION }}-build-${{ github.run_number }}
+          files: |
+            "build/app/outputs/flutter-apk/app-release.apk"
+            "build/linux/x64/release/bundle/linux-release.zip"

@@ -11,9 +11,9 @@ import 'package:flutter/material.dart';
 import 'utils/PreferencesStore.dart';
 
 
-Future main() async {
-  await SharedPrefsHelper.init();
-  initFireDart();
+Future<void> main() async {
+  await SharedPrefsHelper().init();
+  await initFireDart();
   runApp(const MyApp());
 }
 

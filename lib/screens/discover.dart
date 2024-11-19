@@ -1,30 +1,15 @@
 import 'dart:convert';
 import 'dart:math';
-
 import 'package:books_app/widgets/error_view.dart';
 import 'package:books_app/utils/commons.dart';
 import 'package:books_app/models/GBookList.dart';
 import 'package:books_app/widgets/item_book_grid.dart';
-import 'package:firedart/auth/exceptions.dart';
 import 'package:firedart/auth/firebase_auth.dart';
 import 'package:firedart/firestore/firestore.dart';
-// import 'package:easy_search_bar/easy_search_bar.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:hive/hive.dart';
 import 'package:http/http.dart' as http;
-
-import '../models/GBook.dart';
-import '../widgets/item_book_list.dart';
 import '../widgets/no_network.dart';
 
-List<String> queries = [
-  'Walter Isaacson',
-  'Paulo Coelho',
-  'Dale Carnegie',
-  'Robert Greene'
-];
-String query = queries[Random().nextInt(queries.length - 1)];
 
 class Discover extends StatefulWidget {
   const Discover({super.key});
@@ -36,7 +21,6 @@ class Discover extends StatefulWidget {
 }
 
 class DiscoverState extends State<Discover> {
-  bool isFavLoading = false;
   List<String> favList = [];
 
   @override
@@ -46,8 +30,6 @@ class DiscoverState extends State<Discover> {
   }
 
   fetchFavorites() async {
-    isFavLoading = true;
-
     var snapshot = await Firestore.instance
         .collection('users')
         .document( FirebaseAuth.instance.userId )
@@ -62,7 +44,6 @@ class DiscoverState extends State<Discover> {
     }
 
     setState(() {
-      isFavLoading = false;
       favList;
     });
   }
@@ -121,27 +102,31 @@ class DiscoverState extends State<Discover> {
 
   Future<GBookList> fetchBooks() async {
     print('---fetchBooks()---');
-    if (!query.isEmpty) {
-      var uri = Uri.parse(getSearchUrl(query));
-      print('fetchBooks uri=${uri.toString()}');
 
-      final response = await http.Client().get(uri);
-      // print('fetchBooks response=${response.body}');
+    List<String> queries = [
+      'Walter Isaacson',
+      'Paulo Coelho',
+      'Dale Carnegie',
+      'Robert Greene'
+    ];
+    String query = queries[Random().nextInt(queries.length)];
 
-      if(response.body.contains('error')){
-        if(response.body.contains('"code": 429')){
-          return Future.error('API Free Quota Exceeded');
-        } else {
-          return Future.error('Something went wrong');
-        }
+    var uri = Uri.parse(getSearchUrl(query));
+    print('fetchBooks uri=${uri.toString()}');
+
+    final response = await http.Client().get(uri);
+    // print('fetchBooks response=${response.body}');
+
+    if (response.body.contains('error')) {
+      if (response.body.contains('"code": 429')) {
+        return Future.error('API Free Quota Exceeded');
       } else {
-        /*// Use the compute function to run parsePhotos in a separate isolate.
-        return compute(parseBooks, response.body);*/
-        return await parseBooks(response.body);
+        return Future.error('Something went wrong');
       }
+    } else {
+      return await parseBooks(response.body);
     }
 
-    return Future.error('Something went wrong');
   }
 
   // A function that converts a response body into a List<GBookList>.

@@ -199,7 +199,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
       if(auth.isSignedIn){
         print('signin suxus');
-        SharedPrefsHelper.setBool(Enumz.isLoggedIn.name, true);
+        SharedPrefsHelper().setBool(Enumz.isLoggedIn.name, true);
 
         Navigator.of(context).pushAndRemoveUntil(
           MaterialPageRoute(builder: (context) => TabView()),
