@@ -149,3 +149,20 @@ jobs:
           name: macos-release
           path: build/macos/Build/Products/Release/macos-release.zip
 
+      - name: Extract Version
+        id: extract_version
+        run: |
+          version=$(grep -E '^version:' pubspec.yaml | sed 's/version: //')
+          echo "VERSION=$version" >> $GITHUB_ENV
+
+      - name: Create Release
+        uses: softprops/action-gh-release@v2
+        with:
+          name: "Release v${{ env.VERSION }}-build-${{ github.run_number }}"
+          token: ${{ secrets.BOOKSAPPCI }}
+          tag: v${{ env.VERSION }}-build-${{ github.run_number }}
+          files: |
+            "windows-release.zip"
+            "build/app/outputs/flutter-apk/app-debug.apk"
+            "linux-release.zip"
+            "build/macos/Build/Products/Release/macos-release.zip"
