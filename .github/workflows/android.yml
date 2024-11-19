@@ -66,7 +66,7 @@ jobs:
         with:
           name: "Release v${{ env.VERSION }}-build-${{ github.run_number }}"
           token: ${{ secrets.BOOKSAPPCI }}
-          tag: v${{ env.VERSION }}-build-${{ github.run_number }}
+          tag_name: v${{ env.VERSION }}-build-${{ github.run_number }}
           files: |
             "build/app/outputs/flutter-apk/app-release.apk"
             "build/linux/x64/release/bundle/linux-release.zip"
