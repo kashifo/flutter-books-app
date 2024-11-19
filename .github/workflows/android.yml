@@ -83,7 +83,7 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: linux-release
-          path: build/linux/x64/release/bundle/linux-release.zip
+          path: linux-release.zip
 
   windows-build:
     runs-on: windows-latest
@@ -105,11 +105,18 @@ jobs:
       - name: Build Windows Binary
         run: flutter build windows --release  --dart-define=FIREBASE_KEY=${{ secrets.FIREBASE_KEY }} --dart-define=FIREBASE_PROJECT_ID=${{ secrets.FIREBASE_PROJECT_ID }} --dart-define=GOOGLE_BOOKS_API_KEY=${{ secrets.GOOGLE_BOOKS_API_KEY }}
 
+      - name: Archive Windows Binary
+        uses: thedoctor0/zip-release@0.7.5
+        with:
+          type: 'zip'
+          filename: 'windows-release.zip'
+          path: build\windows\x64\runner\Release\
+
       - name: Upload Windows Binary as Artifact
         uses: actions/upload-artifact@v3
         with:
           name: windows-release
-          path: build\windows\x64\runner\Release\flutter_books_app.exe
+          path: windows-release.zip
 
   macos-build:
     runs-on: macos-latest
