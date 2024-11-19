@@ -32,13 +32,13 @@ jobs:
         run: flutter pub get
 
       - name: Build APK
-        run: flutter build apk --dart-define=FIREBASE_KEY=${{ secrets.FIREBASE_KEY }} --dart-define=FIREBASE_PROJECT_ID=${{ secrets.FIREBASE_PROJECT_ID }} --dart-define=GOOGLE_BOOKS_API_KEY=${{ secrets.GOOGLE_BOOKS_API_KEY }}
+        run: flutter build apk --debug --dart-define=FIREBASE_KEY=${{ secrets.FIREBASE_KEY }} --dart-define=FIREBASE_PROJECT_ID=${{ secrets.FIREBASE_PROJECT_ID }} --dart-define=GOOGLE_BOOKS_API_KEY=${{ secrets.GOOGLE_BOOKS_API_KEY }}
 
       - name: Upload APK as Artifact
         uses: actions/upload-artifact@v3
         with:
-          name: app-release.apk
-          path: build/app/outputs/flutter-apk/app-release.apk
+          name: android-app.apk
+          path: build/app/outputs/flutter-apk/app-debug.apk
 
   linux-build:
     runs-on: ubuntu-latest
@@ -105,18 +105,11 @@ jobs:
       - name: Build Windows Binary
         run: flutter build windows --release  --dart-define=FIREBASE_KEY=${{ secrets.FIREBASE_KEY }} --dart-define=FIREBASE_PROJECT_ID=${{ secrets.FIREBASE_PROJECT_ID }} --dart-define=GOOGLE_BOOKS_API_KEY=${{ secrets.GOOGLE_BOOKS_API_KEY }}
 
-      - name: Archive Windows Binary
-        uses: thedoctor0/zip-release@0.7.5
-        with:
-          type: 'zip'
-          filename: 'windows-release.zip'
-          path: build/windows/runner/Release/
-
       - name: Upload Windows Binary as Artifact
         uses: actions/upload-artifact@v3
         with:
           name: windows-release
-          path: build/windows/runner/Release/windows-release.zip
+          path: build\windows\x64\runner\Release\flutter_books_app.exe
 
   macos-build:
     runs-on: macos-latest
@@ -138,15 +131,8 @@ jobs:
       - name: Build macOS Binary
         run: flutter build macos --release  --dart-define=FIREBASE_KEY=${{ secrets.FIREBASE_KEY }} --dart-define=FIREBASE_PROJECT_ID=${{ secrets.FIREBASE_PROJECT_ID }} --dart-define=GOOGLE_BOOKS_API_KEY=${{ secrets.GOOGLE_BOOKS_API_KEY }}
 
-      - name: Archive macOS Binary
-        uses: thedoctor0/zip-release@0.7.5
-        with:
-          type: 'zip'
-          filename: 'macos-release.zip'
-          path: build/macos/Build/Products/Release/
-
       - name: Upload macOS Binary as Artifact
         uses: actions/upload-artifact@v3
         with:
           name: macos-release
-          path: build/macos/Build/Products/Release/macos-release.zip
+          path: build/macos/Build/Products/Release/flutter_books_app.app
