@@ -138,8 +138,14 @@ jobs:
       - name: Build macOS Binary
         run: flutter build macos --release  --dart-define=FIREBASE_KEY=${{ secrets.FIREBASE_KEY }} --dart-define=FIREBASE_PROJECT_ID=${{ secrets.FIREBASE_PROJECT_ID }} --dart-define=GOOGLE_BOOKS_API_KEY=${{ secrets.GOOGLE_BOOKS_API_KEY }}
 
+      - name: Archive macOS Binary
+        run: |
+          cd build/macos/Build/Products/Release/
+          zip -r macos-release.zip flutter_books_app.app
+
       - name: Upload macOS Binary as Artifact
         uses: actions/upload-artifact@v3
         with:
           name: macos-release
-          path: build/macos/Build/Products/Release/flutter_books_app.app
+          path: build/macos/Build/Products/Release/macos-release.zip
+
