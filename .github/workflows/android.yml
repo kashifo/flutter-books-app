@@ -1,4 +1,4 @@
-name: Android CI
+name: Flutter CI
 
 on:
   push:
@@ -7,8 +7,75 @@ on:
     branches: [ "master", "dev" ]
 
 jobs:
-  build:
+  windows-build:
+    runs-on: windows-latest
+    continue-on-error: true
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set Up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.24.5'
+          channel: 'stable'
+          cache: flutter
+
+      - name: Install Dependencies
+        run: flutter pub get
+
+      # Build Windows Binary
+      - name: Build Windows Binary
+        run: flutter build windows --release --dart-define=FIREBASE_KEY=${{ secrets.FIREBASE_KEY }} --dart-define=FIREBASE_PROJECT_ID=${{ secrets.FIREBASE_PROJECT_ID }} --dart-define=GOOGLE_BOOKS_API_KEY=${{ secrets.GOOGLE_BOOKS_API_KEY }}
+
+      - name: Archive Windows Binary
+        uses: thedoctor0/zip-release@0.7.5
+        with:
+          type: 'zip'
+          filename: 'windows-release.zip'
+          path: build\windows\x64\runner\Release\
+
+      - name: Upload Windows Binary as Artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: windows-release
+          path: windows-release.zip
+
+  macos-build:
+    runs-on: macos-latest
+    continue-on-error: true
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set Up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.24.5'
+          channel: 'stable'
+          cache: flutter
+
+      - name: Install Dependencies
+        run: flutter pub get
+
+      # Build macOS Binary
+      - name: Build macOS Binary
+        run: flutter build macos --release --dart-define=FIREBASE_KEY=${{ secrets.FIREBASE_KEY }} --dart-define=FIREBASE_PROJECT_ID=${{ secrets.FIREBASE_PROJECT_ID }} --dart-define=GOOGLE_BOOKS_API_KEY=${{ secrets.GOOGLE_BOOKS_API_KEY }}
+
+      - name: Archive macOS Binary
+        run: |
+          cd build/macos/Build/Products/Release/
+          zip -r macos-release.zip flutter_books_app.app
+
+      - name: Upload macOS Binary as Artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: macos-release
+          path: build/macos/Build/Products/Release/macos-release.zip
+
+  ubuntu-build:
     runs-on: ubuntu-latest
+    continue-on-error: true
 
     steps:
       - uses: actions/checkout@v4
@@ -30,37 +97,67 @@ jobs:
       - name: Install Dependencies
         run: flutter pub get
 
+      # Android Build
       - name: Build APK
-        run: flutter build apk --dart-define=FIREBASE_KEY=${{ secrets.FIREBASE_KEY }} --dart-define=FIREBASE_PROJECT_ID=${{ secrets.FIREBASE_PROJECT_ID }} --dart-define=GOOGLE_BOOKS_API_KEY=${{ secrets.GOOGLE_BOOKS_API_KEY }}
+        run: flutter build apk --debug --dart-define=FIREBASE_KEY=${{ secrets.FIREBASE_KEY }} --dart-define=FIREBASE_PROJECT_ID=${{ secrets.FIREBASE_PROJECT_ID }} --dart-define=GOOGLE_BOOKS_API_KEY=${{ secrets.GOOGLE_BOOKS_API_KEY }}
 
       - name: Upload APK as Artifact
         uses: actions/upload-artifact@v3
         with:
-          name: app-release.apk
-          path: build/app/outputs/flutter-apk/app-release.apk
+          name: android-app
+          path: build/app/outputs/flutter-apk/app-debug.apk
 
+      # Linux Dependencies
+      - name: Install Linux Dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y cmake ninja-build libgtk-3-dev liblzma-dev
+
+      # Linux Build
       - name: Build Linux Binary
-        run: flutter build linux --release
+        run: flutter build linux --release --dart-define=FIREBASE_KEY=${{ secrets.FIREBASE_KEY }} --dart-define=FIREBASE_PROJECT_ID=${{ secrets.FIREBASE_PROJECT_ID }} --dart-define=GOOGLE_BOOKS_API_KEY=${{ secrets.GOOGLE_BOOKS_API_KEY }}
 
-      - name: Archive Release
+      - name: Archive Linux Binary
         uses: thedoctor0/zip-release@0.7.5
         with:
           type: 'zip'
           filename: 'linux-release.zip'
           path: build/linux/x64/release/bundle/
 
-      - name: Upload Linux binary as artifact
+      - name: Upload Linux Binary as Artifact
         uses: actions/upload-artifact@v3
         with:
           name: linux-release
-          path: build/linux/x64/release/bundle/linux-release.zip
+          path: linux-release.zip
 
+      # Download Artifacts from Other Jobs
+      - name: Download Windows Artifact
+        uses: actions/download-artifact@v3
+        with:
+          name: windows-release
+          path: .
+
+      - name: Download macOS Artifact
+        uses: actions/download-artifact@v3
+        with:
+          name: macos-release
+          path: .
+
+      # Debugging: Check Current Directory and List Files
+      - name: Show Current Directory
+        run: pwd
+
+      - name: List Files in Current Directory
+        run: ls -al
+
+      # Extract Version
       - name: Extract Version
         id: extract_version
         run: |
           version=$(grep -E '^version:' pubspec.yaml | sed 's/version: //')
           echo "VERSION=$version" >> $GITHUB_ENV
 
+      # Create Release
       - name: Create Release
         uses: softprops/action-gh-release@v2
         with:
@@ -68,5 +165,7 @@ jobs:
           token: ${{ secrets.BOOKSAPPCI }}
           tag_name: v${{ env.VERSION }}-build-${{ github.run_number }}
           files: |
-            "build/app/outputs/flutter-apk/app-release.apk"
-            "build/linux/x64/release/bundle/linux-release.zip"
+            "linux-release.zip"
+            "windows-release.zip"
+            "macos-release.zip"
+            "build/app/outputs/flutter-apk/app-debug.apk"
