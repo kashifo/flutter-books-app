@@ -13,13 +13,13 @@ dependencies:
   cupertino_icons: ^1.0.2
   http: ^1.2.2
   flutter_widget_from_html: ^0.15.2
-#  easy_search_bar: ^2.5.0
   extended_image: ^8.0.0
   webview_all: ^0.4.5
   connectivity_plus: ^6.0.5
   flutter_bloc: ^8.1.3
   shared_preferences: ^2.3.2
   firedart: ^0.9.8
+  get: ^4.6.6
 
 dev_dependencies:
   flutter_test:

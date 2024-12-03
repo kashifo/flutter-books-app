@@ -6,6 +6,7 @@ import 'package:firedart/auth/firebase_auth.dart';
 import 'package:firedart/firestore/firestore.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 
 import '../widgets/item_book_list.dart';
@@ -63,81 +64,83 @@ class SearchState extends State<Search> {
   
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: Column(
-        children: [
-          Container(
-            padding: const EdgeInsets.all(16),
-            decoration: BoxDecoration(boxShadow: [
-              BoxShadow(
-                  color: const Color(0xff1D1617).withOpacity(0.11),
-                  blurRadius: 40,
-                  spreadRadius: 0.0)
-            ]
+    return Scaffold(
+      body: SafeArea(
+        child: Column(
+          children: [
+            Container(
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(boxShadow: [
+                BoxShadow(
+                    color: Get.isDarkMode? Colors.grey.withOpacity(0.1) : Colors.black87.withOpacity(0.2),
+                    blurRadius: 40,
+                    spreadRadius: 0.0)
+              ]
+              ),
+              child: TextField(
+                autofocus: true,
+                keyboardType: TextInputType.text,
+                textInputAction: TextInputAction.search,
+                onSubmitted: (queryInput) {
+                  setState(() {
+                    query = queryInput;
+                  });
+                },
+                decoration: InputDecoration(
+                    filled: true,
+                    fillColor: Get.isDarkMode? Colors.black54 : Colors.white,
+                    contentPadding: const EdgeInsets.all(15),
+                    hintText: 'Type something to search',
+                    hintStyle:
+                    TextStyle(color: Get.isDarkMode? Colors.grey : Colors.black38, fontSize: 14),
+                    suffixIcon: Padding(
+                      padding: EdgeInsets.all(12),
+                      child: Icon(Icons.search, color: Get.isDarkMode? Colors.grey : Colors.black54,),
+                    ),
+                    border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(15),
+                        borderSide: BorderSide.none)),
+              ),
             ),
-            child: TextField(
-              autofocus: true,
-              keyboardType: TextInputType.text,
-              textInputAction: TextInputAction.search,
-              onSubmitted: (queryInput) {
-                setState(() {
-                  query = queryInput;
-                });
-              },
-              decoration: InputDecoration(
-                  filled: true,
-                  fillColor: Colors.white,
-                  contentPadding: const EdgeInsets.all(15),
-                  hintText: 'Type something to search',
-                  hintStyle:
-                  const TextStyle(color: Colors.black38, fontSize: 14),
-                  suffixIcon: const Padding(
-                    padding: EdgeInsets.all(12),
-                    child: Icon(Icons.search, color: Colors.black54,),
-                  ),
-                  border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(15),
-                      borderSide: BorderSide.none)),
-            ),
-          ),
 
-          Expanded(
-            child: FutureBuilder<GBookList>(
-              future: searchBooks(httpClient),
-              builder: (context, snapshot) {
+            Expanded(
+              child: FutureBuilder<GBookList>(
+                future: searchBooks(httpClient),
+                builder: (context, snapshot) {
 
-                if(isLoading){
-                  return const Center(
-                    child: CircularProgressIndicator(),
-                  );
-                } else if (query.isEmpty) {
-                  return const Center(
-                    child: Text('Type something to search'),
-                  );
-                } else if (snapshot.hasError) {
-                  return Center(
-                    child: Text('An error has occurred! \n\n ${snapshot.error}'),
-                  );
-                } else if (snapshot.hasData) {
+                  if(isLoading){
+                    return const Center(
+                      child: CircularProgressIndicator(),
+                    );
+                  } else if (query.isEmpty) {
+                    return const Center(
+                      child: Text('Type something to search'),
+                    );
+                  } else if (snapshot.hasError) {
+                    return Center(
+                      child: Text('An error has occurred! \n\n ${snapshot.error}'),
+                    );
+                  } else if (snapshot.hasData) {
 
-                  if(snapshot.data?.items!=null && snapshot.data!.items!.isNotEmpty) {
-                    return BooksList(gBookList: snapshot.data!);
+                    if(snapshot.data?.items!=null && snapshot.data!.items!.isNotEmpty) {
+                      return BooksList(gBookList: snapshot.data!);
+                    } else {
+                      return const Center(
+                        child: Text('No items found'),
+                      );
+                    }
+
                   } else {
                     return const Center(
-                      child: Text('No items found'),
+                      child: CircularProgressIndicator(),
                     );
                   }
 
-                } else {
-                  return const Center(
-                    child: CircularProgressIndicator(),
-                  );
-                }
-
-              },
+                },
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }//build

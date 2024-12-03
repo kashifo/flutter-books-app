@@ -2,6 +2,7 @@ import 'package:books_app/utils/Enumz.dart';
 import 'package:books_app/utils/shared_prefs_helper.dart';
 import 'package:firedart/auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
 import '../main.dart';
 import '../utils/commons.dart';
@@ -17,9 +18,7 @@ class _LoginScreenState extends State<LoginScreen> {
   bool obscureText = true;
   bool isSignupScreen = false;
   final formKey = GlobalKey<FormState>();
-  TextEditingController nameController = TextEditingController();
-  TextEditingController emailController = TextEditingController();
-  TextEditingController passwordController = TextEditingController();
+  String? name, email, password;
   var auth = FirebaseAuth.instance;
 
   @override
@@ -47,7 +46,6 @@ class _LoginScreenState extends State<LoginScreen> {
               Visibility(
                 visible: isSignupScreen,
                 child: TextFormField(
-                  controller: nameController,
                   keyboardType: TextInputType.name,
                   textInputAction: TextInputAction.next,
                   style: TextStyle(color: Colors.white),
@@ -72,6 +70,9 @@ class _LoginScreenState extends State<LoginScreen> {
                     }
                     return null;
                   },
+                  onSaved: (value) {
+                    name = value;
+                  },
                 ),
               ),
 
@@ -80,7 +81,6 @@ class _LoginScreenState extends State<LoginScreen> {
               ),
 
               TextFormField(
-                controller: emailController,
                 keyboardType: TextInputType.emailAddress,
                 textInputAction: TextInputAction.next,
                 style: TextStyle(color: Colors.white),
@@ -102,8 +102,14 @@ class _LoginScreenState extends State<LoginScreen> {
                 validator: (value) {
                   if (value == null || value.isEmpty) {
                     return 'Please enter your email';
+                  } else if( !GetUtils.isEmail(value) ){
+                    return 'Please enter a valid email';
                   }
+
                   return null;
+                },
+                onSaved: (value) {
+                  email = value;
                 },
               ),
 
@@ -112,7 +118,6 @@ class _LoginScreenState extends State<LoginScreen> {
               ),
 
               TextFormField(
-                controller: passwordController,
                 obscureText: obscureText,
                 keyboardType: TextInputType.visiblePassword,
                 textInputAction: TextInputAction.done,
@@ -143,6 +148,9 @@ class _LoginScreenState extends State<LoginScreen> {
                   }
                   return null;
                 },
+                onSaved: (value) {
+                  password = value;
+                },
               ),
 
               SizedBox(height: 16),
@@ -153,6 +161,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 textColor: getIntColor('0065ff'),
                 onPressed: () => {
                   if(formKey.currentState!.validate()){
+                    formKey.currentState?.save(),
                     proceedToLogin()
                   } else {
                     ScaffoldMessenger.of(context).showSnackBar(
@@ -191,10 +200,10 @@ class _LoginScreenState extends State<LoginScreen> {
 
     try {
       if(isSignupScreen){
-        await auth.signUp(emailController.text, passwordController.text);
-        auth.updateProfile(displayName: nameController.text);
+        await auth.signUp(email!, password!);
+        auth.updateProfile(displayName: name!);
       } else {
-        await auth.signIn(emailController.text, passwordController.text);
+        await auth.signIn(email!, password!);
       }
 
       if(auth.isSignedIn){

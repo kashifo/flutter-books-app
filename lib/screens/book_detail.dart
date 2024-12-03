@@ -112,7 +112,10 @@ class _BookDetailState extends State<BookDetail> {
                 width: 16,
               ),
               ElevatedButton(
-                child: Icon(isLiked ? Icons.favorite : Icons.favorite_border),
+                child: Icon(
+                  color: Colors.blue,
+                  isLiked ? Icons.favorite : Icons.favorite_border
+                ),
                 onPressed: () {
                   print('fav pressed: ${gBook.toString()}');
 

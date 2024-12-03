@@ -3,6 +3,7 @@ import 'package:books_app/models/GBookList.dart';
 import 'package:books_app/utils/firestore_commons.dart';
 import 'package:extended_image/extended_image.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import '../screens/book_detail.dart';
 import '../utils/ResponsiveUtils.dart';
 
@@ -67,14 +68,18 @@ class _ItemBooksGridState extends State<ItemBooksGrid> {
         /*elevation: 2,
         shadowColor: Colors.black,*/
         decoration: BoxDecoration(
-          color: Colors.white,
+          // color: Colors.white,
+          // color: Theme.of(context).dialogBackgroundColor,
+          color: Get.isDarkMode ? Colors.black : Colors.white,
           shape: BoxShape.rectangle,
           boxShadow: [
             BoxShadow(
                 offset: const Offset(0, 0),
                 blurRadius: 4,
                 spreadRadius: 1,
-                color: Colors.black.withOpacity(0.2))
+                color: Colors.black.withOpacity(0.2),
+                // color: Theme.of(context).shadowColor
+            )
           ],
           borderRadius: BorderRadius.circular(10),
         ),

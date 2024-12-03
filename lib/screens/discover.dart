@@ -51,13 +51,12 @@ class DiscoverState extends State<Discover> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: AppBar(
         title: const Text(
           'Discover',
           style: TextStyle(fontFamily: 'Jost', fontWeight: FontWeight.w600),
         ),
-        backgroundColor: Colors.white,
-        foregroundColor: Colors.black,
         automaticallyImplyLeading: false,
       ),
       body: FutureBuilder<GBookList>(

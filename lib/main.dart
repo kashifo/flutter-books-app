@@ -8,6 +8,7 @@ import 'package:books_app/utils/shared_prefs_helper.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:firedart/firedart.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'utils/PreferencesStore.dart';
 
 
@@ -37,7 +38,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     ResponsiveUtils.calcScrWidth(context);
 
-    return MaterialApp(
+    return GetMaterialApp(
       home: FirebaseAuth.instance.isSignedIn ? TabView() : LoginScreen(),
       title: 'Flutter BooksApp',
       debugShowCheckedModeBanner: false,
@@ -47,7 +48,19 @@ class MyApp extends StatelessWidget {
             primarySwatch: getMaterialColor('0065ff'),
             backgroundColor: Colors.white),
         useMaterial3: true,
+        brightness: Brightness.light,
+        scaffoldBackgroundColor: Colors.white.withOpacity(0.8),
+        cardColor: Colors.white,
+          shadowColor: Colors.black.withOpacity(0.2)
       ),
+      darkTheme: ThemeData.dark().copyWith(
+        primaryColor: getMaterialColor('0065ff'),
+          brightness: Brightness.dark,
+          scaffoldBackgroundColor: Colors.black87,
+          cardColor: Colors.black,
+          shadowColor: Colors.white24
+      ),
+      themeMode: ThemeMode.light,
     );
   }
 }

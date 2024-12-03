@@ -4,6 +4,7 @@ import 'package:books_app/models/GBookList.dart';
 import 'package:books_app/utils/firestore_commons.dart';
 import 'package:extended_image/extended_image.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import '../screens/book_detail.dart';
 
 class BooksList extends StatefulWidget {
@@ -59,17 +60,22 @@ class _ItemBookListState extends State<ItemBookList> {
                     )));
       },
       child: Container(
-        margin: const EdgeInsets.fromLTRB(8, 8, 8, 0),
+        margin: const EdgeInsets.fromLTRB(12, 12, 12, 0),
 
         decoration: BoxDecoration(
-          color: Colors.white,
+          // color: Colors.white,
+          color: Get.isDarkMode ? Colors.black : Colors.white,
+          // color: Theme.of(context).cardColor,
           shape: BoxShape.rectangle,
           borderRadius: BorderRadius.circular(8),
           boxShadow: [
             BoxShadow(
+                offset: const Offset(0, 0),
                 blurRadius: 2,
-                spreadRadius: 0,
-                color: Colors.black.withOpacity(0.2))
+                spreadRadius: 1,
+                color: Colors.grey.withOpacity(0.1)
+                // color: Theme.of(context).shadowColor
+            )
           ]
         ),
 

@@ -4,6 +4,7 @@ import 'package:books_app/utils/shared_prefs_helper.dart';
 import 'package:books_app/widgets/item_book_list.dart';
 import 'package:firedart/firedart.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
 class Favorites extends StatefulWidget {
   const Favorites({super.key});
@@ -64,9 +65,18 @@ class _FavoritesState extends State<Favorites> {
           'Favorites',
           style: TextStyle(fontFamily: 'Jost', fontWeight: FontWeight.w600),
         ),
-        backgroundColor: Colors.white,
-        foregroundColor: Colors.black,
+        /*backgroundColor: Get.isDarkMode ? Colors.black : Colors.white,
+        foregroundColor: Get.isDarkMode ? Colors.white : Colors.black,*/
         actions: [
+          InkWell(
+            onTap: (){
+              print('isDark=${Get.isDarkMode}');
+              Get.changeTheme(Get.isDarkMode? ThemeData.light(): ThemeData.dark());
+              // Get.changeThemeMode(Get.isDarkMode? ThemeMode.light: ThemeMode.dark);
+            },
+              child: Icon(Icons.light_mode)
+          ),
+          SizedBox(width: 16),
           InkWell(
             onTap: () {
               SharedPrefsHelper().clear();
