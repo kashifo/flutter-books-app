@@ -157,7 +157,7 @@ jobs:
         run: |
           version=$(grep -E '^version:' pubspec.yaml | sed 's/version: //')
           echo "VERSION=$version" >> $GITHUB_ENV
-
+      
       # Create Release
       - name: Create Release
         uses: softprops/action-gh-release@v2
@@ -166,7 +166,7 @@ jobs:
           token: ${{ secrets.BOOKSAPPCI }}
           tag_name: v${{ env.VERSION }}-build-${{ github.run_number }}
           files: |
-            "linux-release.zip"
-            "windows-release.zip"
-            "macos-release.zip"
-            "build/app/outputs/flutter-apk/app-debug.apk"
+            linux-release.zip
+            windows-release.zip
+            macos-release.zip
+            build/app/outputs/flutter-apk/app-debug.apk
