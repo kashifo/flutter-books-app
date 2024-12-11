@@ -11,10 +11,11 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'utils/PreferencesStore.dart';
 
-
 Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
   await SharedPrefsHelper().init();
   await initFireDart();
+
   runApp(const MyApp());
 }
 
